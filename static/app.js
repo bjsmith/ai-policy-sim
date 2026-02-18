@@ -54,22 +54,38 @@ function updateSidebar() {
     // Update US values in sidebar
     document.getElementById('sidebar-us-compute').textContent =
         parseFloat(document.getElementById('us-compute').value).toFixed(1);
+    document.getElementById('sidebar-us-compute-growth').textContent =
+        (parseFloat(document.getElementById('us-compute-growth').value) * 100).toFixed(0);
     document.getElementById('sidebar-us-capital').textContent =
         Math.round(document.getElementById('us-capital').value);
+    document.getElementById('sidebar-us-capital-growth').textContent =
+        (parseFloat(document.getElementById('us-capital-growth').value) * 100).toFixed(0);
     document.getElementById('sidebar-us-talent').textContent =
         Math.round(document.getElementById('us-talent').value);
+    document.getElementById('sidebar-us-talent-growth').textContent =
+        (parseFloat(document.getElementById('us-talent-growth').value) * 100).toFixed(0);
     document.getElementById('sidebar-us-energy').textContent =
         Math.round(document.getElementById('us-energy').value);
+    document.getElementById('sidebar-us-energy-growth').textContent =
+        (parseFloat(document.getElementById('us-energy-growth-unconstrained').value) * 100).toFixed(0);
 
     // Update China values in sidebar
     document.getElementById('sidebar-china-compute').textContent =
         parseFloat(document.getElementById('china-compute').value).toFixed(1);
+    document.getElementById('sidebar-china-compute-growth').textContent =
+        (parseFloat(document.getElementById('china-compute-growth').value) * 100).toFixed(0);
     document.getElementById('sidebar-china-capital').textContent =
         Math.round(document.getElementById('china-capital').value);
+    document.getElementById('sidebar-china-capital-growth').textContent =
+        (parseFloat(document.getElementById('china-capital-growth').value) * 100).toFixed(0);
     document.getElementById('sidebar-china-talent').textContent =
         Math.round(document.getElementById('china-talent').value);
+    document.getElementById('sidebar-china-talent-growth').textContent =
+        (parseFloat(document.getElementById('china-talent-growth').value) * 100).toFixed(0);
     document.getElementById('sidebar-china-energy').textContent =
         Math.round(document.getElementById('china-energy').value);
+    document.getElementById('sidebar-china-energy-growth').textContent =
+        (parseFloat(document.getElementById('china-energy-growth-unconstrained').value) * 100).toFixed(0);
 
     // Update grid threshold in sidebar
     const usThreshold = document.getElementById('us-grid-threshold');
