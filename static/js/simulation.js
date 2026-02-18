@@ -535,11 +535,38 @@ function createTrainingCapacityChart(stats, years) {
                     },
                     ticks: {
                         callback: function(value, index, values) {
-                            return value.toExponential(0);
-                        }
+                            // Calculate the exponent
+                            const exponent = Math.log10(value);
+                            // Only show labels at powers of 10
+                            if (Math.abs(exponent - Math.round(exponent)) < 0.01) {
+                                return '1e' + Math.round(exponent);
+                            }
+                            return '';
+                        },
+                        // Force ticks at every order of magnitude
+                        autoSkip: false,
+                        maxRotation: 0,
+                        minRotation: 0
                     },
                     grid: {
-                        color: 'rgba(0, 0, 0, 0.05)'
+                        color: function(context) {
+                            const value = context.tick.value;
+                            const exponent = Math.log10(value);
+                            // Major gridlines at every OOM (1e28, 1e29, etc)
+                            if (Math.abs(exponent - Math.round(exponent)) < 0.01) {
+                                return 'rgba(0, 0, 0, 0.2)';  // Darker for major gridlines
+                            }
+                            return 'rgba(0, 0, 0, 0.05)';  // Light for minor gridlines
+                        },
+                        lineWidth: function(context) {
+                            const value = context.tick.value;
+                            const exponent = Math.log10(value);
+                            // Thicker lines at every OOM
+                            if (Math.abs(exponent - Math.round(exponent)) < 0.01) {
+                                return 2;
+                            }
+                            return 1;
+                        }
                     }
                 },
                 x: {

@@ -1,5 +1,9 @@
 # Configuration for AI Policy Simulation
 
+# Application settings
+app:
+  version: "1.0.0"
+
 # Server settings
 server:
   port: 5000

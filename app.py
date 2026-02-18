@@ -24,6 +24,7 @@ def load_config():
     except FileNotFoundError:
         # Return default config if file not found
         return {
+            'app': {'version': '1.0.0'},
             'server': {'port': 5000, 'host': '127.0.0.1', 'debug': True},
             'simulation': {'default_years': 10, 'default_samples': 1000, 'max_samples': 5000}
         }
@@ -39,7 +40,7 @@ np.random.seed(42)
 @app.route('/')
 def index():
     """Render the main simulation interface"""
-    return render_template('index.html')
+    return render_template('index.html', version=config['app']['version'])
 
 
 @app.route('/api/defaults')

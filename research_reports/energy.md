@@ -1,5 +1,34 @@
 # ⚡ Energy: Data Center Power & Infrastructure
 
+## Recent Data & Projections (2024-2025)
+
+### US Total Electricity Generation
+
+**2024 Actual Performance:**
+- Total US electricity generation: **4,097 TWh** ([EIA 2025 projections](https://www.eia.gov/outlooks/aeo/))
+- Year-over-year growth: **+3.0%** (+128 TWh from 2023), marking the fifth highest annual growth this century
+- Historical context: This represents a significant acceleration from the near-flat growth (0.5-1% annually) seen during 2008-2021
+- Growth drivers: Data center expansion, AI workloads, weather patterns, and broader economic activity
+
+**EIA Annual Energy Outlook 2025 Projections:**
+- **2025**: 4,419 TWh baseline
+- **2030**: ~4,800 TWh (implied ~1.7% annual growth)
+- **2050**: 6,646 TWh (50% increase from 2025, representing ~1.6% compound annual growth)
+
+**Data Center-Specific Projections (EIA AEO 2025):**
+- Data center electricity use projected to increase **+90 TWh by 2030** and **+440 TWh by 2050** above 2022 baseline
+- Commercial computing will grow from 8% of commercial sector electricity in 2024 to **20% by 2050**
+- Data centers projected to reach **10-12% of total US generation by 2028-2030**, up from ~4% in 2024
+
+### Key Insight: The Growing Gap
+
+The critical tension in US energy for AI:
+- **Total grid growth**: 1.5-2.5% annually (population, electrification, general economy)
+- **Datacenter growth**: 15-20% annually (AI training, cloud migration, edge computing)
+- **Implication**: Datacenters growing 7-10x faster than overall grid capacity
+
+This creates a **closing window** where unconstrained datacenter expansion (2024-2027) transitions to grid-constrained competition for power (2028-2030+), making the grid saturation threshold (~10% of total generation) a critical parameter for AI policy modeling.
+
 ## United States
 
 US data centers consumed [about 183 TWh in 2024, more than 4% of national electricity consumption](https://www.ciphernews.com/articles/the-u-s-and-china-drive-data-center-power-consumption/). AI-specific servers used an estimated [53-76 TWh in 2024, with projections of 165-326 TWh by 2028](https://research.aimultiple.com/ai-energy-consumption/), representing 30% annual growth driven by AI adoption.

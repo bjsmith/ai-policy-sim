@@ -13,7 +13,7 @@ const PRESETS = {
             capital: 109, capital_growth: 0.30, capital_constraint: 0.90,
             talent: 63, talent_growth: 0.08, talent_constraint: 0.85,
             energy: 183, energy_growth_unconstrained: 0.18, energy_growth_grid: 0.06,
-            total_generation: 4500, grid_threshold: 0.08
+            total_generation: 4100, grid_threshold: 0.10
         },
         china: {
             compute: 0.6, compute_growth: 0.35, compute_constraint: 0.45,

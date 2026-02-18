@@ -47,6 +47,12 @@
             opacity: 0.9;
         }
 
+        header .version {
+            font-size: 0.75em;
+            opacity: 0.6;
+            margin-top: 8px;
+        }
+
         .main-content {
             display: grid;
             grid-template-columns: 400px 1fr;
@@ -63,6 +69,8 @@
 
         .content {
             padding: 30px;
+            overflow-y: auto;
+            max-height: calc(100vh - 200px);
         }
 
         .section {
@@ -349,16 +357,16 @@
         .report-toc {
             position: -webkit-sticky;
             position: sticky;
-            top: 20px;
+            top: 0;
             align-self: start;
             height: fit-content;
-            max-height: calc(100vh - 40px);
+            max-height: 100vh;
             overflow-y: auto;
             background: #f8f9fa;
             padding: 20px;
             border-radius: 12px;
             border-left: 4px solid #667eea;
-            z-index: 10;
+            z-index: 100;
         }
 
         .report-toc h3 {
@@ -578,6 +586,7 @@
         <header>
             <h1>US-China AI Policy Simulation</h1>
             <p>Probabilistic modeling of frontier AI development based on compute, capital, talent, and energy constraints</p>
+            <p class="version">v{{ version }}</p>
         </header>
 
         <div class="main-content">
