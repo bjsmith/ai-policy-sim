@@ -1,47 +1,28 @@
 /**
  * Preset Configurations for AI Policy Simulation
  *
- * Defines different scenario presets that users can quickly load
+ * Presets are now loaded from presets.json file
  */
 
-const PRESETS = {
-    'evidence-based': {
-        name: 'Evidence-based (Current Research)',
-        description: 'Parameters based on current research and empirical data',
-        us: {
-            compute: 3.5, compute_growth: 0.50, compute_constraint: 0.95,
-            capital: 109, capital_growth: 0.30, capital_constraint: 0.90,
-            talent: 63, talent_growth: 0.08, talent_constraint: 0.85,
-            energy: 183, energy_growth_unconstrained: 0.18, energy_growth_grid: 0.06,
-            total_generation: 4100, grid_threshold: 0.10
-        },
-        china: {
-            compute: 0.6, compute_growth: 0.35, compute_constraint: 0.45,
-            capital: 98, capital_growth: 0.25, capital_constraint: 0.70,
-            talent: 52, talent_growth: 0.12, talent_constraint: 0.75,
-            energy: 104, energy_growth_unconstrained: 0.20, energy_growth_grid: 0.07,
-            total_generation: 8500, grid_threshold: 0.06
+let PRESETS = {};
+
+/**
+ * Load presets from JSON file
+ */
+async function loadPresets() {
+    try {
+        const response = await fetch('/api/presets');
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
         }
-    },
-    'equal-starting': {
-        name: 'Equal Starting Points',
-        description: 'Both countries start with identical parameters',
-        us: {
-            compute: 2.0, compute_growth: 0.40, compute_constraint: 0.85,
-            capital: 100, capital_growth: 0.27, capital_constraint: 0.80,
-            talent: 57, talent_growth: 0.10, talent_constraint: 0.80,
-            energy: 140, energy_growth_unconstrained: 0.19, energy_growth_grid: 0.065,
-            total_generation: 6500, grid_threshold: 0.07
-        },
-        china: {
-            compute: 2.0, compute_growth: 0.40, compute_constraint: 0.85,
-            capital: 100, capital_growth: 0.27, capital_constraint: 0.80,
-            talent: 57, talent_growth: 0.10, talent_constraint: 0.80,
-            energy: 140, energy_growth_unconstrained: 0.19, energy_growth_grid: 0.065,
-            total_generation: 6500, grid_threshold: 0.07
-        }
+        PRESETS = await response.json();
+        console.log('Presets loaded successfully:', Object.keys(PRESETS));
+    } catch (error) {
+        console.error('Error loading presets:', error);
+        // Fallback to empty presets
+        PRESETS = {};
     }
-};
+}
 
 /**
  * Apply a preset configuration to the UI
@@ -66,10 +47,10 @@ function applyPreset() {
     setParameter('us-talent-growth', preset.us.talent_growth);
     setParameter('us-talent-constraint', preset.us.talent_constraint);
     setParameter('us-energy', preset.us.energy);
-    setParameter('us-energy-growth-unconstrained', preset.us.energy_growth_unconstrained);
-    setParameter('us-energy-growth-grid', preset.us.energy_growth_grid);
-    setParameter('us-total-generation', preset.us.total_generation);
-    setParameter('us-grid-threshold', preset.us.grid_threshold);
+    setParameter('us-total-grid-energy', preset.us.total_grid_energy);
+    setParameter('us-grid-growth-rate', preset.us.grid_growth_rate);
+    setParameter('us-efficiency-improvement-rate', preset.us.efficiency_improvement_rate);
+    setParameter('us-grid-saturation-threshold', preset.us.grid_saturation_threshold);
 
     // Apply China parameters
     setParameter('china-compute', preset.china.compute);
@@ -82,10 +63,10 @@ function applyPreset() {
     setParameter('china-talent-growth', preset.china.talent_growth);
     setParameter('china-talent-constraint', preset.china.talent_constraint);
     setParameter('china-energy', preset.china.energy);
-    setParameter('china-energy-growth-unconstrained', preset.china.energy_growth_unconstrained);
-    setParameter('china-energy-growth-grid', preset.china.energy_growth_grid);
-    setParameter('china-total-generation', preset.china.total_generation);
-    setParameter('china-grid-threshold', preset.china.grid_threshold);
+    setParameter('china-total-grid-energy', preset.china.total_grid_energy);
+    setParameter('china-grid-growth-rate', preset.china.grid_growth_rate);
+    setParameter('china-efficiency-improvement-rate', preset.china.efficiency_improvement_rate);
+    setParameter('china-grid-saturation-threshold', preset.china.grid_saturation_threshold);
 
     // Update sidebar
     updateSidebar();

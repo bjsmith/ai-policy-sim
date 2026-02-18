@@ -10,6 +10,8 @@ let energyChart = null;
 document.addEventListener('DOMContentLoaded', function() {
     loadDefaults();
     setupInputListeners();
+    // Load presets from JSON file
+    loadPresets();
     // Load research report on initial page load since it's the default tab
     loadResearchReport();
 });
@@ -95,52 +97,6 @@ function updateSidebar() {
     }
 }
 
-// Apply a preset configuration
-function applyPreset() {
-    const presetName = document.getElementById('preset-selector').value;
-    const preset = PRESETS[presetName];
-
-    if (!preset) {
-        console.error('Unknown preset:', presetName);
-        return;
-    }
-
-    // Apply US parameters
-    setParameter('us-compute', preset.us.compute);
-    setParameter('us-compute-growth', preset.us.compute_growth);
-    setParameter('us-compute-constraint', preset.us.compute_constraint);
-    setParameter('us-capital', preset.us.capital);
-    setParameter('us-capital-growth', preset.us.capital_growth);
-    setParameter('us-capital-constraint', preset.us.capital_constraint);
-    setParameter('us-talent', preset.us.talent);
-    setParameter('us-talent-growth', preset.us.talent_growth);
-    setParameter('us-talent-constraint', preset.us.talent_constraint);
-    setParameter('us-energy', preset.us.energy);
-    setParameter('us-energy-growth-unconstrained', preset.us.energy_growth_unconstrained);
-    setParameter('us-energy-growth-grid', preset.us.energy_growth_grid);
-    setParameter('us-total-generation', preset.us.total_generation);
-    setParameter('us-grid-threshold', preset.us.grid_threshold);
-
-    // Apply China parameters
-    setParameter('china-compute', preset.china.compute);
-    setParameter('china-compute-growth', preset.china.compute_growth);
-    setParameter('china-compute-constraint', preset.china.compute_constraint);
-    setParameter('china-capital', preset.china.capital);
-    setParameter('china-capital-growth', preset.china.capital_growth);
-    setParameter('china-capital-constraint', preset.china.capital_constraint);
-    setParameter('china-talent', preset.china.talent);
-    setParameter('china-talent-growth', preset.china.talent_growth);
-    setParameter('china-talent-constraint', preset.china.talent_constraint);
-    setParameter('china-energy', preset.china.energy);
-    setParameter('china-energy-growth-unconstrained', preset.china.energy_growth_unconstrained);
-    setParameter('china-energy-growth-grid', preset.china.energy_growth_grid);
-    setParameter('china-total-generation', preset.china.total_generation);
-    setParameter('china-grid-threshold', preset.china.grid_threshold);
-
-    // Update sidebar
-    updateSidebar();
-}
-
 // Load default parameters
 async function loadDefaults() {
     try {
@@ -206,10 +162,10 @@ function getParameters() {
             talent_growth_rate: parseFloat(document.getElementById('us-talent-growth').value),
             talent_constraint: parseFloat(document.getElementById('us-talent-constraint').value),
             energy_mean: parseFloat(document.getElementById('us-energy').value),
-            energy_growth_unconstrained: parseFloat(document.getElementById('us-energy-growth-unconstrained').value),
-            energy_growth_grid: parseFloat(document.getElementById('us-energy-growth-grid').value),
-            total_generation: parseFloat(document.getElementById('us-total-generation').value),
-            grid_threshold: parseFloat(document.getElementById('us-grid-threshold').value),
+            total_grid_energy: parseFloat(document.getElementById('us-total-grid-energy').value),
+            grid_growth_rate: parseFloat(document.getElementById('us-grid-growth-rate').value),
+            efficiency_improvement_rate: parseFloat(document.getElementById('us-efficiency-improvement-rate').value),
+            grid_saturation_threshold: parseFloat(document.getElementById('us-grid-saturation-threshold').value),
         },
         china: {
             compute_mean: parseFloat(document.getElementById('china-compute').value),
@@ -222,10 +178,10 @@ function getParameters() {
             talent_growth_rate: parseFloat(document.getElementById('china-talent-growth').value),
             talent_constraint: parseFloat(document.getElementById('china-talent-constraint').value),
             energy_mean: parseFloat(document.getElementById('china-energy').value),
-            energy_growth_unconstrained: parseFloat(document.getElementById('china-energy-growth-unconstrained').value),
-            energy_growth_grid: parseFloat(document.getElementById('china-energy-growth-grid').value),
-            total_generation: parseFloat(document.getElementById('china-total-generation').value),
-            grid_threshold: parseFloat(document.getElementById('china-grid-threshold').value),
+            total_grid_energy: parseFloat(document.getElementById('china-total-grid-energy').value),
+            grid_growth_rate: parseFloat(document.getElementById('china-grid-growth-rate').value),
+            efficiency_improvement_rate: parseFloat(document.getElementById('china-efficiency-improvement-rate').value),
+            grid_saturation_threshold: parseFloat(document.getElementById('china-grid-saturation-threshold').value),
         },
         years: 10,
         samples: 1000
@@ -607,11 +563,120 @@ function createFactorCharts(stats, years) {
         china: stats.china_talent.p50
     }, talentChart);
 
-    // Energy chart
-    createFactorChart('energyChart', 'Available Energy for AI (TWh)', labels, {
-        us: stats.us_energy.p50,
-        china: stats.china_energy.p50
-    }, energyChart);
+    // Energy charts - NEW MODEL
+    // Chart 1: Total Grid Energy
+    createEnergyGridChart('energyChart', labels, stats);
+}
+
+// Create energy model visualization charts
+function createEnergyGridChart(canvasId, labels, stats) {
+    const ctx = document.getElementById(canvasId).getContext('2d');
+
+    // Destroy existing chart
+    if (energyChart) {
+        energyChart.destroy();
+    }
+
+    energyChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: labels,
+            datasets: [
+                {
+                    label: 'US Total Grid Energy',
+                    data: stats.us_total_grid.p50,
+                    borderColor: 'rgba(74, 144, 226, 1)',
+                    backgroundColor: 'rgba(74, 144, 226, 0.1)',
+                    borderWidth: 2,
+                    tension: 0.4,
+                    fill: false
+                },
+                {
+                    label: 'US Energy Available (AI)',
+                    data: stats.us_energy_available.p50,
+                    borderColor: 'rgba(74, 144, 226, 0.7)',
+                    backgroundColor: 'rgba(74, 144, 226, 0.2)',
+                    borderWidth: 2,
+                    borderDash: [5, 5],
+                    tension: 0.4,
+                    fill: false
+                },
+                {
+                    label: 'US Energy Required',
+                    data: stats.us_energy_required.p50,
+                    borderColor: 'rgba(102, 126, 234, 1)',
+                    backgroundColor: 'rgba(102, 126, 234, 0.3)',
+                    borderWidth: 3,
+                    tension: 0.4,
+                    fill: false
+                },
+                {
+                    label: 'China Total Grid Energy',
+                    data: stats.china_total_grid.p50,
+                    borderColor: 'rgba(226, 74, 74, 1)',
+                    backgroundColor: 'rgba(226, 74, 74, 0.1)',
+                    borderWidth: 2,
+                    tension: 0.4,
+                    fill: false
+                },
+                {
+                    label: 'China Energy Available (AI)',
+                    data: stats.china_energy_available.p50,
+                    borderColor: 'rgba(226, 74, 74, 0.7)',
+                    backgroundColor: 'rgba(226, 74, 74, 0.2)',
+                    borderWidth: 2,
+                    borderDash: [5, 5],
+                    tension: 0.4,
+                    fill: false
+                },
+                {
+                    label: 'China Energy Required',
+                    data: stats.china_energy_required.p50,
+                    borderColor: 'rgba(189, 53, 53, 1)',
+                    backgroundColor: 'rgba(189, 53, 53, 0.3)',
+                    borderWidth: 3,
+                    tension: 0.4,
+                    fill: false
+                }
+            ]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    display: true,
+                    position: 'top'
+                },
+                title: {
+                    display: true,
+                    text: 'Energy Model: Grid Energy, Available, and Required (TWh)',
+                    font: { size: 14, weight: 'bold' }
+                },
+                subtitle: {
+                    display: true,
+                    text: 'Solid lines = Total Grid | Dashed lines = Available for AI (saturation threshold) | Thick lines = Required by compute',
+                    font: { size: 11 },
+                    padding: { bottom: 10 }
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    title: {
+                        display: true,
+                        text: 'Energy (TWh/year)'
+                    }
+                },
+                x: {
+                    title: {
+                        display: true,
+                        text: 'Year'
+                    }
+                }
+            }
+        }
+    });
 }
 
 // Helper to create individual factor charts

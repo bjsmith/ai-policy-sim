@@ -12,7 +12,7 @@ Competition for talent has intensified, with [China gaining ground in attracting
 
 ## China
 
-China has dramatically expanded its AI research workforce. From 2015 to 2024, [China's AI research workforce grew from under 10,000 to 52,000](https://www.recordedfuture.com/research/measuring-the-us-china-ai-gap). In 2022, China produced [99 percent more Science & Engineering PhDs than the United States—nearly double](https://cset.georgetown.edu/wp-content/uploads/China-is-Fast-Outpacing-U.S.-STEM-PhD-Growth.pdf).
+China has dramatically expanded its AI research workforce. From 2015 to 2024, [China's AI research workforce grew from under 10,000 to 52,000](https://www.recordedfuture.com/research/measuring-the-us-china-ai-gap). In 2022, China produced [99 percent more Science & Engineering PhDs than the United States—nearly double](https://cset.georgetown.edu/wp-content/uploads/China-is-Fast-Outpacing-U.S.-STEM-PhD-Growth.pdf) (see p. 1).
 
 Quality metrics show rapid improvement. At NeurIPS 2022, [Chinese-origin researchers accounted for 26% of top AI researchers](https://www.technologyreview.com/2024/03/27/1090182/ai-talent-global-china-us/), up from just 10% in 2019. [China is narrowing the AI talent gap as research enters the engineering phase](https://en.tmtpost.com/post/7616647), where China's manufacturing strength provides advantages.
 

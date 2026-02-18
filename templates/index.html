@@ -720,30 +720,31 @@
                                 </div>
 
                                 <div class="param-group" style="background: #fff3cd; border-left: 4px solid #ffc107;">
-                                    <h4 style="color: #1e3c72; margin-bottom: 15px;">⚡ Energy (Two-Phase Model)</h4>
+                                    <h4 style="color: #1e3c72; margin-bottom: 15px;">⚡ Energy Model</h4>
                                     <div class="param">
                                         <label>Starting Datacenter Energy (TWh) <span class="param-value" id="us-energy-value">183</span></label>
                                         <input type="range" id="us-energy" min="50" max="500" step="10" value="183" oninput="updateSidebar()">
+                                        <div class="help-text">Used to calculate initial TWh/Compute ratio</div>
                                     </div>
                                     <div class="param">
-                                        <label>Unconstrained Growth Rate <span class="param-value" id="us-energy-growth-unconstrained-value">18%</span></label>
-                                        <input type="range" id="us-energy-growth-unconstrained" min="0" max="0.5" step="0.01" value="0.18" oninput="updateSidebar()">
-                                        <div class="help-text">Initial growth rate (datacenter expansion)</div>
+                                        <label>Total Grid Energy (TWh/year) <span class="param-value" id="us-total-grid-energy-value">4500</span></label>
+                                        <input type="range" id="us-total-grid-energy" min="3000" max="12000" step="100" value="4500" oninput="updateSidebar()">
+                                        <div class="help-text">Total US electricity generation capacity</div>
                                     </div>
                                     <div class="param">
-                                        <label>Grid-Constrained Growth Rate <span class="param-value" id="us-energy-growth-grid-value">6%</span></label>
-                                        <input type="range" id="us-energy-growth-grid" min="0" max="0.15" step="0.01" value="0.06" oninput="updateSidebar()">
-                                        <div class="help-text">Long-term growth rate (limited by grid expansion)</div>
+                                        <label>Grid Growth Rate <span class="param-value" id="us-grid-growth-rate-value">2%</span></label>
+                                        <input type="range" id="us-grid-growth-rate" min="0" max="0.10" step="0.005" value="0.02" oninput="updateSidebar()">
+                                        <div class="help-text">Annual growth of total grid capacity</div>
                                     </div>
                                     <div class="param">
-                                        <label>Total US Generation Capacity (TWh/y) <span class="param-value" id="us-total-generation-value">4500</span></label>
-                                        <input type="range" id="us-total-generation" min="3000" max="12000" step="100" value="4500" oninput="updateSidebar()">
-                                        <div class="help-text">Total US electricity generation</div>
+                                        <label>Efficiency Improvement Rate <span class="param-value" id="us-efficiency-improvement-rate-value">-5%</span></label>
+                                        <input type="range" id="us-efficiency-improvement-rate" min="-0.15" max="0" step="0.005" value="-0.05" oninput="updateSidebar()">
+                                        <div class="help-text">Annual change in TWh/Compute ratio (negative = more efficient)</div>
                                     </div>
                                     <div class="param">
-                                        <label>Grid Saturation Threshold <span class="param-value" id="us-grid-threshold-value">8%</span></label>
-                                        <input type="range" id="us-grid-threshold" min="0" max="0.20" step="0.01" value="0.08" oninput="updateSidebar()">
-                                        <div class="help-text">% of total generation when constraints kick in</div>
+                                        <label>Grid Saturation Threshold <span class="param-value" id="us-grid-saturation-threshold-value">10%</span></label>
+                                        <input type="range" id="us-grid-saturation-threshold" min="0" max="0.30" step="0.01" value="0.10" oninput="updateSidebar()">
+                                        <div class="help-text">Max % of grid energy for AI datacenters</div>
                                     </div>
                                 </div>
                             </div>
@@ -803,30 +804,31 @@
                                 </div>
 
                                 <div class="param-group" style="background: #fff3cd; border-left: 4px solid #ffc107;">
-                                    <h4 style="color: #1e3c72; margin-bottom: 15px;">⚡ Energy (Two-Phase Model)</h4>
+                                    <h4 style="color: #1e3c72; margin-bottom: 15px;">⚡ Energy Model</h4>
                                     <div class="param">
                                         <label>Starting Datacenter Energy (TWh) <span class="param-value" id="china-energy-value">104</span></label>
                                         <input type="range" id="china-energy" min="50" max="500" step="10" value="104" oninput="updateSidebar()">
+                                        <div class="help-text">Used to calculate initial TWh/Compute ratio</div>
                                     </div>
                                     <div class="param">
-                                        <label>Unconstrained Growth Rate <span class="param-value" id="china-energy-growth-unconstrained-value">20%</span></label>
-                                        <input type="range" id="china-energy-growth-unconstrained" min="0" max="0.5" step="0.01" value="0.20" oninput="updateSidebar()">
-                                        <div class="help-text">Initial growth rate (datacenter expansion)</div>
+                                        <label>Total Grid Energy (TWh/year) <span class="param-value" id="china-total-grid-energy-value">8500</span></label>
+                                        <input type="range" id="china-total-grid-energy" min="3000" max="15000" step="100" value="8500" oninput="updateSidebar()">
+                                        <div class="help-text">Total China electricity generation capacity</div>
                                     </div>
                                     <div class="param">
-                                        <label>Grid-Constrained Growth Rate <span class="param-value" id="china-energy-growth-grid-value">7%</span></label>
-                                        <input type="range" id="china-energy-growth-grid" min="0" max="0.15" step="0.01" value="0.07" oninput="updateSidebar()">
-                                        <div class="help-text">Long-term growth rate (limited by grid expansion)</div>
+                                        <label>Grid Growth Rate <span class="param-value" id="china-grid-growth-rate-value">3%</span></label>
+                                        <input type="range" id="china-grid-growth-rate" min="0" max="0.10" step="0.005" value="0.03" oninput="updateSidebar()">
+                                        <div class="help-text">Annual growth of total grid capacity</div>
                                     </div>
                                     <div class="param">
-                                        <label>Total China Generation Capacity (TWh/y) <span class="param-value" id="china-total-generation-value">8500</span></label>
-                                        <input type="range" id="china-total-generation" min="3000" max="12000" step="100" value="8500" oninput="updateSidebar()">
-                                        <div class="help-text">Total China electricity generation</div>
+                                        <label>Efficiency Improvement Rate <span class="param-value" id="china-efficiency-improvement-rate-value">-4%</span></label>
+                                        <input type="range" id="china-efficiency-improvement-rate" min="-0.15" max="0" step="0.005" value="-0.04" oninput="updateSidebar()">
+                                        <div class="help-text">Annual change in TWh/Compute ratio (negative = more efficient)</div>
                                     </div>
                                     <div class="param">
-                                        <label>Grid Saturation Threshold <span class="param-value" id="china-grid-threshold-value">6%</span></label>
-                                        <input type="range" id="china-grid-threshold" min="0" max="0.20" step="0.01" value="0.06" oninput="updateSidebar()">
-                                        <div class="help-text">% of total generation when constraints kick in</div>
+                                        <label>Grid Saturation Threshold <span class="param-value" id="china-grid-saturation-threshold-value">8%</span></label>
+                                        <input type="range" id="china-grid-saturation-threshold" min="0" max="0.30" step="0.01" value="0.08" oninput="updateSidebar()">
+                                        <div class="help-text">Max % of grid energy for AI datacenters</div>
                                     </div>
                                 </div>
                             </div>

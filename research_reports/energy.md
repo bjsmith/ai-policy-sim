@@ -113,12 +113,12 @@ This means:
 Understanding the **ceiling** on US electricity generation growth requires examining both historical precedents and current physical/institutional constraints:
 
 **Historical Maximum Growth Rates:**
-- **1950s-1960s**: 8-10% annual growth, adding ~40 TWh/year (but from a much smaller base)
-- **1970s peak**: ~100 TWh/year absolute additions at 4-5% growth rates
-- **2024**: 128 TWh added (+3.0% growth), marking the **fifth highest annual growth this century**
+- **1950s-1960s**: [8-10% annual growth, adding ~40 TWh/year](https://hannahritchie.substack.com/p/usa-electricity-growth) (but from a much smaller base)
+- **1970s peak**: [~100 TWh/year absolute additions at 4-5% growth rates](https://hannahritchie.substack.com/p/usa-electricity-growth)
+- **2024**: [128 TWh added (+3.0% growth), marking the fifth highest annual growth this century](https://ember-energy.org/latest-insights/us-electricity-2025-special-report/2024-in-review/)
 
 **Near-Term Capacity Projections (2025-2030):**
-- **Planned additions**: [226 GW wind/solar, 100 GW gas, 68 GW batteries through 2035](https://www.publicpower.org/system/files/documents/Americas-Electricity-Generation-Capacity-2025-Update.pdf)
+- **Planned additions**: [226 GW wind/solar, 100 GW gas, 68 GW batteries through 2035](https://www.publicpower.org/system/files/documents/Americas-Electricity-Generation-Capacity-2025-Update.pdf) (see Executive Summary, p. 2-3)
 - **Interconnection agreements**: [Record 75 GW secured in 2024, 36 GW through July 2025](https://emp.lbl.gov/publications/queued-2025-edition-characteristics)
 - **Realistic annual capacity additions**: 50-70 GW/year nameplate (20-30 GW effective with capacity factors)
 
@@ -131,20 +131,20 @@ Understanding the **ceiling** on US electricity generation growth requires exami
 - **Implication**: Even with unlimited capital and demand, physical grid connection processes limit how fast new generation can come online
 
 **2. Construction Timeline Constraints by Technology**
-- **Solar/Wind**: 4 years average (permitting + siting + construction)
-- **Natural gas combined-cycle**: 3-4 years, but capital costs doubled from $1,200/kW (2022) to $2,500-2,800/kW (2025) due to supply chain tightening
-- **Nuclear**: 8-15 years for traditional plants; 5-8 years for small modular reactors (SMRs) in optimistic scenarios
-- **Transmission lines**: ~10 years to complete, substantially longer than generation projects
+- **Solar/Wind**: [4 years average (permitting + siting + construction)](https://www.wri.org/insights/clean-energy-permitting-reform-us)
+- **Natural gas combined-cycle**: [3-4 years, but capital costs doubled from $1,200/kW (2022) to $2,500-2,800/kW (2025)](https://cleanpower.org/wp-content/uploads/gateway/2025/03/US_National_Power_Demand_Study_2025_FINAL.pdf) (see Section 3, p. 18-20) due to supply chain tightening
+- **Nuclear**: 8-15 years for traditional plants; [5-8 years for small modular reactors (SMRs) in optimistic scenarios](https://www.natlawreview.com/article/power-plants-moon-us-nuclear-revival-2025)
+- **Transmission lines**: [~10 years to complete](https://www.wri.org/insights/clean-energy-permitting-reform-us), substantially longer than generation projects
 
 **3. Supply Chain and Labor Constraints**
-- **Turbine supply tightening**: CCGT new builds constrained by equipment availability
-- **EPC (Engineering, Procurement, Construction) bandwidth**: Limited number of qualified firms to execute large projects
-- **Labor markets**: Competitive demand for skilled workers across construction, electrical, and engineering trades
-- **Trade/tariff impacts**: 2025 tariff measures increased costs and uncertainty, slowing procurement
+- **Turbine supply tightening**: [CCGT new builds constrained by equipment availability](https://cleanpower.org/wp-content/uploads/gateway/2025/03/US_National_Power_Demand_Study_2025_FINAL.pdf) (see p. 20-21)
+- **EPC (Engineering, Procurement, Construction) bandwidth**: [Limited number of qualified firms to execute large projects](https://cleanpower.org/wp-content/uploads/gateway/2025/03/US_National_Power_Demand_Study_2025_FINAL.pdf) (see p. 22-23)
+- **Labor markets**: [Competitive demand for skilled workers across construction, electrical, and engineering trades](https://cleanpower.org/wp-content/uploads/gateway/2025/03/US_National_Power_Demand_Study_2025_FINAL.pdf) (see p. 23-24)
+- **Trade/tariff impacts**: [2025 tariff measures increased costs and uncertainty, slowing procurement](https://bcse.org/wp-content/uploads/2025/02/2025-Sustainable-Energy-in-America-Factbook.pdf) (see Executive Summary, p. 4-5)
 
 **4. Renewable Intermittency and Storage Limits**
-- **Capacity factor reality**: Solar ~25%, Wind ~35% means 100 GW nameplate = 25-35 GW effective baseload
-- **Battery storage**: 68 GW planned through 2035, but provides hours (not days) of backup
+- **Capacity factor reality**: [Solar ~23%, Wind ~34%](https://www.eia.gov/todayinenergy/detail.php?id=61242) means 100 GW nameplate = 23-34 GW effective baseload
+- **Battery storage**: [68 GW planned through 2035](https://www.publicpower.org/system/files/documents/Americas-Electricity-Generation-Capacity-2025-Update.pdf) (see p. 3), but provides hours (not days) of backup
 - **AI datacenter needs**: Require 24/7 baseload power, making renewables alone insufficient without massive storage buildout
 
 ### Synthesis: Maximum US Generation Growth 2025-2035

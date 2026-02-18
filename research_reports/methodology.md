@@ -40,9 +40,9 @@ This represents the **quantity of computation** that can be devoted to training 
 ### Base Parameters
 
 **Chip Performance (H100 baseline)**
-- Theoretical peak: 2,000 TFLOPS (2×10¹⁵ operations/second)
-- Mixed precision training: ~1,000 TFLOPS effective
-- Tensor core utilization: 60-80% in practice
+- [Theoretical peak: ~1,000 TFLOPS (FP8/TF32 tensor operations)](https://www.nvidia.com/en-us/data-center/h100/)
+- [Mixed precision training: ~500-1,000 TFLOPS effective depending on precision](https://developer.nvidia.com/blog/nvidia-hopper-architecture-in-depth/)
+- Tensor core utilization: 60-80% in practice (estimated from deployment experience)
 
 **Utilization Rates**
 - US: 40% of chips actively training at any given time
@@ -123,9 +123,9 @@ Actual capacity = 4.41e28 FLOPS-years (unconstrained)
 To make these numbers intuitive:
 
 **Training compute for major models**:
-- GPT-3 (2020): ~3.14×10²³ FLOPS (~0.003 YottaFLOPS)
-- GPT-4 (2023): ~2×10²⁵ FLOPS (~0.2 YottaFLOPS, estimated)
-- Hypothetical GPT-5: ~2×10²⁶ FLOPS (~2 YottaFLOPS, projected)
+- [GPT-3 (2020): ~3.14×10²³ FLOPS](https://epochai.org/data/epochdb/notable_ai_models/GPT-3) (~0.003 YottaFLOPS)
+- [GPT-4 (2023): ~2.15×10²⁵ FLOPS](https://epoch.ai/data-insights/models-over-1e25-flop) (~0.2 YottaFLOPS)
+- Hypothetical GPT-5: ~2×10²⁶ FLOPS (~2 YottaFLOPS, extrapolated from scaling trends)
 
 With 44.1 YottaFLOPS-years capacity, the US could theoretically train:
 - ~140,000 GPT-3 class models per year, OR

@@ -1,0 +1,36 @@
+{
+  "name": "Equal Starting Points",
+  "description": "Both countries start with identical parameters",
+  "us": {
+    "compute": 2.0,
+    "compute_growth": 0.40,
+    "compute_constraint": 0.85,
+    "capital": 100,
+    "capital_growth": 0.27,
+    "capital_constraint": 0.80,
+    "talent": 57,
+    "talent_growth": 0.10,
+    "talent_constraint": 0.80,
+    "energy": 140,
+    "total_grid_energy": 6500,
+    "grid_growth_rate": 0.025,
+    "efficiency_improvement_rate": -0.045,
+    "grid_saturation_threshold": 0.09
+  },
+  "china": {
+    "compute": 2.0,
+    "compute_growth": 0.40,
+    "compute_constraint": 0.85,
+    "capital": 100,
+    "capital_growth": 0.27,
+    "capital_constraint": 0.80,
+    "talent": 57,
+    "talent_growth": 0.10,
+    "talent_constraint": 0.80,
+    "energy": 140,
+    "total_grid_energy": 6500,
+    "grid_growth_rate": 0.025,
+    "efficiency_improvement_rate": -0.045,
+    "grid_saturation_threshold": 0.09
+  }
+}

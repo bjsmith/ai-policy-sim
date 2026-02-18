@@ -43,6 +43,39 @@ def index():
     return render_template('index.html', version=config['app']['version'])
 
 
+@app.route('/api/presets')
+def get_presets():
+    """Get preset configurations from presets folder"""
+    presets_dir = os.path.join(os.path.dirname(__file__), 'presets')
+    presets = {}
+
+    try:
+        # Check if presets directory exists
+        if not os.path.exists(presets_dir):
+            return jsonify({'error': 'Presets directory not found'}), 404
+
+        # Load all JSON files from presets directory
+        for filename in os.listdir(presets_dir):
+            if filename.endswith('.json'):
+                preset_id = filename[:-5]  # Remove .json extension
+                filepath = os.path.join(presets_dir, filename)
+
+                try:
+                    with open(filepath, 'r') as f:
+                        preset_data = yaml.safe_load(f)
+                        presets[preset_id] = preset_data
+                except Exception as e:
+                    print(f"Error loading preset {filename}: {e}")
+                    continue
+
+        if not presets:
+            return jsonify({'error': 'No presets found'}), 404
+
+        return jsonify(presets)
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+
 @app.route('/api/defaults')
 def get_defaults():
     """Get default parameter values"""
@@ -86,7 +119,7 @@ def simulate():
     """Run simulation with provided parameters"""
     data = request.json
 
-    # Parse US parameters with two-phase energy model
+    # Parse US parameters with new energy model
     us_params = CountryParams(
         compute_mean=float(data['us']['compute_mean']),
         compute_std=float(data['us']['compute_mean']) * 0.12,  # 12% std dev
@@ -105,16 +138,15 @@ def simulate():
 
         energy_mean=float(data['us']['energy_mean']),
         energy_std=float(data['us']['energy_mean']) * 0.11,  # 11% std dev
-        energy_growth_rate=float(data['us']['energy_growth_unconstrained']),  # Use unconstrained for now
-        energy_constraint=1.0 - float(data['us']['grid_threshold']),  # Convert threshold to constraint
-        # Store additional params for potential future use
-        energy_growth_unconstrained=float(data['us']['energy_growth_unconstrained']),
-        energy_growth_grid=float(data['us']['energy_growth_grid']),
-        total_generation=float(data['us']['total_generation']),
-        grid_threshold=float(data['us']['grid_threshold']),
+        energy_constraint=0.80,  # Deprecated parameter, kept for compatibility
+        # New energy model parameters
+        total_grid_energy=float(data['us']['total_grid_energy']),
+        grid_growth_rate=float(data['us']['grid_growth_rate']),
+        efficiency_improvement_rate=float(data['us']['efficiency_improvement_rate']),
+        grid_saturation_threshold=float(data['us']['grid_saturation_threshold']),
     )
 
-    # Parse China parameters with two-phase energy model
+    # Parse China parameters with new energy model
     china_params = CountryParams(
         compute_mean=float(data['china']['compute_mean']),
         compute_std=float(data['china']['compute_mean']) * 0.25,  # Higher uncertainty
@@ -133,13 +165,12 @@ def simulate():
 
         energy_mean=float(data['china']['energy_mean']),
         energy_std=float(data['china']['energy_mean']) * 0.14,
-        energy_growth_rate=float(data['china']['energy_growth_unconstrained']),  # Use unconstrained for now
-        energy_constraint=1.0 - float(data['china']['grid_threshold']),  # Convert threshold to constraint
-        # Store additional params for potential future use
-        energy_growth_unconstrained=float(data['china']['energy_growth_unconstrained']),
-        energy_growth_grid=float(data['china']['energy_growth_grid']),
-        total_generation=float(data['china']['total_generation']),
-        grid_threshold=float(data['china']['grid_threshold']),
+        energy_constraint=0.70,  # Deprecated parameter, kept for compatibility
+        # New energy model parameters
+        total_grid_energy=float(data['china']['total_grid_energy']),
+        grid_growth_rate=float(data['china']['grid_growth_rate']),
+        efficiency_improvement_rate=float(data['china']['efficiency_improvement_rate']),
+        grid_saturation_threshold=float(data['china']['grid_saturation_threshold']),
     )
 
     # Get simulation parameters

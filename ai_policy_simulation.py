@@ -30,17 +30,17 @@ class CountryParams:
     talent_growth_rate: float
     talent_constraint: float
 
-    # Energy (in TWh available for AI)
-    energy_mean: float
+    # Energy parameters (new model)
+    energy_mean: float  # Starting datacenter energy (TWh) - used to calculate initial TWh/Compute ratio
     energy_std: float
-    energy_growth_rate: float
-    energy_constraint: float
+    energy_constraint: float  # Deprecated, kept for backwards compatibility
+    energy_growth_rate: float = None  # Deprecated, kept for backwards compatibility
 
-    # Optional: Two-phase energy model parameters
-    energy_growth_unconstrained: float = None  # Initial growth rate (datacenter expansion)
-    energy_growth_grid: float = None  # Grid-limited growth rate
-    total_generation: float = None  # Total electricity generation capacity
-    grid_threshold: float = None  # Saturation threshold (% of total generation)
+    # New energy model parameters
+    total_grid_energy: float = None  # Total grid energy generation capacity (TWh/year)
+    grid_growth_rate: float = None  # Annual growth rate of total grid energy
+    efficiency_improvement_rate: float = None  # Annual improvement in TWh/Compute ratio (negative = improvement)
+    grid_saturation_threshold: float = None  # Max % of grid that can be used for AI datacenters
 
 
 class AIProgressSimulation:
@@ -104,61 +104,43 @@ class AIProgressSimulation:
 
         return samples
 
-    def _sample_energy_twophase(self, params: CountryParams, year: int, prev_energy: np.ndarray = None) -> np.ndarray:
+    def _calculate_energy_for_year(self, params: CountryParams, year: int,
+                                   compute: np.ndarray, initial_twh_per_compute: float) -> Tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
         """
-        Sample energy using two-phase growth model:
-        - Phase 1 (unconstrained): High growth as planned datacenters come online
-        - Phase 2 (grid-constrained): Lower growth limited by grid expansion
-        Transition happens when datacenter usage hits threshold % of total generation
+        Calculate energy metrics for a given year using the new energy model:
+        1. Total grid energy grows at a steady rate
+        2. Compute demand is based on TWh/Compute ratio with efficiency improvements
+        3. Energy available is capped by grid saturation threshold
+        4. Energy multiplier is the ratio of available to required
 
         Args:
-            params: Country parameters with energy model settings
+            params: Country parameters
             year: Year index (0-based)
-            prev_energy: Previous year's energy values (for monotonic constraint)
+            compute: Compute capacity for this year (millions of GPUs)
+            initial_twh_per_compute: TWh per million GPUs in year 0
 
         Returns:
-            Array of sampled energy values that always increase from prev_energy
+            Tuple of (total_grid_energy, energy_available, energy_required, energy_actual)
         """
-        if year == 0:
-            # Year 0: Just sample around the mean with uncertainty
-            uncertainty = np.random.normal(1.0, params.energy_std / params.energy_mean, self.samples)
-            samples = params.energy_mean * uncertainty
-            return np.maximum(samples, params.energy_mean * 0.8)  # Floor at 80% of mean
+        # 1. Calculate total grid energy for this year
+        grid_growth = np.random.normal(params.grid_growth_rate, 0.005, self.samples)
+        total_grid_energy = params.total_grid_energy * ((1 + grid_growth) ** year)
 
-        # Use two-phase model if parameters are available
-        if params.energy_growth_unconstrained is not None and params.total_generation is not None:
-            # Calculate threshold in TWh
-            threshold_twh = params.total_generation * params.grid_threshold
+        # 2. Calculate energy available (grid saturation threshold)
+        energy_available = total_grid_energy * params.grid_saturation_threshold
 
-            # Determine which phase each sample is in based on previous year
-            phase_1_mask = prev_energy < threshold_twh
-            phase_2_mask = ~phase_1_mask
+        # 3. Calculate TWh/Compute ratio for this year (with efficiency improvements)
+        # Negative efficiency_improvement_rate means getting more efficient (lower TWh per compute)
+        efficiency_factor = (1 + params.efficiency_improvement_rate) ** year
+        twh_per_compute_current = initial_twh_per_compute * efficiency_factor
 
-            # Initialize next year's energy
-            next_energy = np.zeros(self.samples)
+        # 4. Calculate energy required based on compute demand
+        energy_required = compute * twh_per_compute_current
 
-            # Phase 1: Unconstrained growth (datacenter expansion)
-            if np.any(phase_1_mask):
-                growth_1 = np.random.normal(params.energy_growth_unconstrained, 0.02, self.samples)
-                next_energy[phase_1_mask] = prev_energy[phase_1_mask] * (1 + growth_1[phase_1_mask])
+        # 5. Calculate actual energy used (capped by available)
+        energy_actual = np.minimum(energy_required, energy_available)
 
-            # Phase 2: Grid-constrained growth
-            if np.any(phase_2_mask):
-                growth_2 = np.random.normal(params.energy_growth_grid, 0.015, self.samples)
-                next_energy[phase_2_mask] = prev_energy[phase_2_mask] * (1 + growth_2[phase_2_mask])
-
-            # Ensure we never exceed total generation capacity (hard ceiling)
-            next_energy = np.minimum(next_energy, params.total_generation * 0.95)
-
-        else:
-            # Fallback to simple growth model
-            growth = np.random.normal(params.energy_growth_rate, 0.02, self.samples)
-            next_energy = prev_energy * (1 + growth)
-
-        # CRITICAL: Ensure monotonic increase (energy never decreases)
-        next_energy = np.maximum(next_energy, prev_energy * 1.01)  # Minimum 1% growth
-
-        return next_energy
+        return total_grid_energy, energy_available, energy_required, energy_actual
 
     def _calculate_progress(self, compute: np.ndarray, capital: np.ndarray,
                            talent: np.ndarray, energy: np.ndarray,
@@ -264,6 +246,19 @@ class AIProgressSimulation:
         china_talent_ts = np.zeros((self.years, self.samples))
         china_energy_ts = np.zeros((self.years, self.samples))
 
+        # New energy model tracking
+        us_total_grid = np.zeros((self.years, self.samples))
+        us_energy_available = np.zeros((self.years, self.samples))
+        us_energy_required = np.zeros((self.years, self.samples))
+
+        china_total_grid = np.zeros((self.years, self.samples))
+        china_energy_available = np.zeros((self.years, self.samples))
+        china_energy_required = np.zeros((self.years, self.samples))
+
+        # Calculate initial TWh/Compute ratios
+        us_initial_twh_per_compute = self.us_params.energy_mean / self.us_params.compute_mean
+        china_initial_twh_per_compute = self.china_params.energy_mean / self.china_params.compute_mean
+
         # Run simulation year by year
         for year in range(self.years):
             # Sample US factors
@@ -288,9 +283,11 @@ class AIProgressSimulation:
                 self.us_params.talent_constraint,
                 year
             )
-            # Use two-phase energy model
-            prev_us_energy = us_energy_ts[year-1] if year > 0 else None
-            us_energy = self._sample_energy_twophase(self.us_params, year, prev_us_energy)
+
+            # Calculate US energy using new model
+            us_grid, us_avail, us_req, us_energy = self._calculate_energy_for_year(
+                self.us_params, year, us_compute, us_initial_twh_per_compute
+            )
 
             # Sample China factors
             china_compute = self._sample_factor(
@@ -314,9 +311,11 @@ class AIProgressSimulation:
                 self.china_params.talent_constraint,
                 year
             )
-            # Use two-phase energy model
-            prev_china_energy = china_energy_ts[year-1] if year > 0 else None
-            china_energy = self._sample_energy_twophase(self.china_params, year, prev_china_energy)
+
+            # Calculate China energy using new model
+            china_grid, china_avail, china_req, china_energy = self._calculate_energy_for_year(
+                self.china_params, year, china_compute, china_initial_twh_per_compute
+            )
 
             # Store factor values
             us_compute_ts[year] = us_compute
@@ -328,6 +327,15 @@ class AIProgressSimulation:
             china_capital_ts[year] = china_capital
             china_talent_ts[year] = china_talent
             china_energy_ts[year] = china_energy
+
+            # Store energy model metrics
+            us_total_grid[year] = us_grid
+            us_energy_available[year] = us_avail
+            us_energy_required[year] = us_req
+
+            china_total_grid[year] = china_grid
+            china_energy_available[year] = china_avail
+            china_energy_required[year] = china_req
 
             # Calculate progress
             prev_us = us_progress[year-1] if year > 0 else np.ones(self.samples)
@@ -361,6 +369,13 @@ class AIProgressSimulation:
             'china_capital': china_capital_ts,
             'china_talent': china_talent_ts,
             'china_energy': china_energy_ts,
+            # New energy model metrics
+            'us_total_grid': us_total_grid,
+            'us_energy_available': us_energy_available,
+            'us_energy_required': us_energy_required,
+            'china_total_grid': china_total_grid,
+            'china_energy_available': china_energy_available,
+            'china_energy_required': china_energy_required,
         }
 
     def get_summary_statistics(self, results: Dict[str, np.ndarray]) -> Dict:
