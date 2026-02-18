@@ -6,12 +6,29 @@ from flask import Flask, render_template, request, jsonify
 import numpy as np
 import markdown
 import os
+import yaml
 from ai_policy_simulation import (
     AIProgressSimulation,
     CountryParams,
     get_default_us_params,
     get_default_china_params
 )
+
+# Load configuration
+def load_config():
+    """Load configuration from config.yaml"""
+    config_path = os.path.join(os.path.dirname(__file__), 'config.yaml')
+    try:
+        with open(config_path, 'r') as f:
+            return yaml.safe_load(f)
+    except FileNotFoundError:
+        # Return default config if file not found
+        return {
+            'server': {'port': 5000, 'host': '127.0.0.1', 'debug': True},
+            'simulation': {'default_years': 10, 'default_samples': 1000, 'max_samples': 5000}
+        }
+
+config = load_config()
 
 app = Flask(__name__)
 
@@ -191,4 +208,8 @@ def get_research_report():
 
 
 if __name__ == '__main__':
-    app.run(debug=True, port=5000)
+    app.run(
+        host=config['server']['host'],
+        port=config['server']['port'],
+        debug=config['server']['debug']
+    )

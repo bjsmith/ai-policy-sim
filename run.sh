@@ -19,7 +19,14 @@ if [ ! -f "$VENV_PATH" ]; then
 fi
 
 echo "Using local virtual environment at $VENV_PATH"
+
+# Read port from config.yaml
+PORT=$(grep -A 1 "server:" "$SCRIPT_DIR/config.yaml" | grep "port:" | awk '{print $2}')
+if [ -z "$PORT" ]; then
+    PORT=5000
+fi
+
 echo "Starting AI Policy Simulation..."
-echo "Open your browser to: http://localhost:5000"
+echo "Open your browser to: http://localhost:$PORT"
 echo ""
 $VENV_PATH "$SCRIPT_DIR/app.py"

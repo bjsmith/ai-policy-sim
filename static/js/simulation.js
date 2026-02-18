@@ -6,42 +6,6 @@ let capitalChart = null;
 let talentChart = null;
 let energyChart = null;
 
-// Preset configurations
-const PRESETS = {
-    'evidence-based': {
-        us: {
-            compute: 3.5, compute_growth: 0.50, compute_constraint: 0.95,
-            capital: 109, capital_growth: 0.30, capital_constraint: 0.90,
-            talent: 63, talent_growth: 0.08, talent_constraint: 0.85,
-            energy: 183, energy_growth_unconstrained: 0.18, energy_growth_grid: 0.06,
-            total_generation: 4500, grid_threshold: 0.08
-        },
-        china: {
-            compute: 0.6, compute_growth: 0.35, compute_constraint: 0.45,
-            capital: 98, capital_growth: 0.25, capital_constraint: 0.70,
-            talent: 52, talent_growth: 0.12, talent_constraint: 0.75,
-            energy: 104, energy_growth_unconstrained: 0.20, energy_growth_grid: 0.07,
-            total_generation: 8500, grid_threshold: 0.06
-        }
-    },
-    'equal-starting': {
-        us: {
-            compute: 2.0, compute_growth: 0.40, compute_constraint: 0.85,
-            capital: 100, capital_growth: 0.27, capital_constraint: 0.80,
-            talent: 57, talent_growth: 0.10, talent_constraint: 0.80,
-            energy: 140, energy_growth_unconstrained: 0.19, energy_growth_grid: 0.065,
-            total_generation: 6500, grid_threshold: 0.07
-        },
-        china: {
-            compute: 2.0, compute_growth: 0.40, compute_constraint: 0.85,
-            capital: 100, capital_growth: 0.27, capital_constraint: 0.80,
-            talent: 57, talent_growth: 0.10, talent_constraint: 0.80,
-            energy: 140, energy_growth_unconstrained: 0.19, energy_growth_grid: 0.065,
-            total_generation: 6500, grid_threshold: 0.07
-        }
-    }
-};
-
 // Initialize on page load
 document.addEventListener('DOMContentLoaded', function() {
     loadDefaults();
