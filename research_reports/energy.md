@@ -106,12 +106,96 @@ This means:
 - **Middle years (2027-2030)**: Constraints bite as datacenter share hits 8-12% of grid
 - **Later years (2030+)**: Growth limited by grid expansion pace, falls toward 5-8%
 
+## Upper Limits on US Total Energy Growth (2025-2035)
+
+### Maximum Feasible Build-Out Rates
+
+Understanding the **ceiling** on US electricity generation growth requires examining both historical precedents and current physical/institutional constraints:
+
+**Historical Maximum Growth Rates:**
+- **1950s-1960s**: 8-10% annual growth, adding ~40 TWh/year (but from a much smaller base)
+- **1970s peak**: ~100 TWh/year absolute additions at 4-5% growth rates
+- **2024**: 128 TWh added (+3.0% growth), marking the **fifth highest annual growth this century**
+
+**Near-Term Capacity Projections (2025-2030):**
+- **Planned additions**: [226 GW wind/solar, 100 GW gas, 68 GW batteries through 2035](https://www.publicpower.org/system/files/documents/Americas-Electricity-Generation-Capacity-2025-Update.pdf)
+- **Interconnection agreements**: [Record 75 GW secured in 2024, 36 GW through July 2025](https://emp.lbl.gov/publications/queued-2025-edition-characteristics)
+- **Realistic annual capacity additions**: 50-70 GW/year nameplate (20-30 GW effective with capacity factors)
+
+### Physical and Institutional Constraints
+
+**1. Interconnection Queue Bottleneck**
+- **Current backlog**: 1,400 GW generation + 890 GW storage seeking interconnection as of end-2024
+- **Historical completion rate**: Only 13% of projects requesting interconnection (2000-2019) reached commercial operation by 2024; 77% withdrawn
+- **Queue wait times**: Median time from interconnection request to commercial operation doubled from <2 years (2000-2007) to >4 years (2018-2024)
+- **Implication**: Even with unlimited capital and demand, physical grid connection processes limit how fast new generation can come online
+
+**2. Construction Timeline Constraints by Technology**
+- **Solar/Wind**: 4 years average (permitting + siting + construction)
+- **Natural gas combined-cycle**: 3-4 years, but capital costs doubled from $1,200/kW (2022) to $2,500-2,800/kW (2025) due to supply chain tightening
+- **Nuclear**: 8-15 years for traditional plants; 5-8 years for small modular reactors (SMRs) in optimistic scenarios
+- **Transmission lines**: ~10 years to complete, substantially longer than generation projects
+
+**3. Supply Chain and Labor Constraints**
+- **Turbine supply tightening**: CCGT new builds constrained by equipment availability
+- **EPC (Engineering, Procurement, Construction) bandwidth**: Limited number of qualified firms to execute large projects
+- **Labor markets**: Competitive demand for skilled workers across construction, electrical, and engineering trades
+- **Trade/tariff impacts**: 2025 tariff measures increased costs and uncertainty, slowing procurement
+
+**4. Renewable Intermittency and Storage Limits**
+- **Capacity factor reality**: Solar ~25%, Wind ~35% means 100 GW nameplate = 25-35 GW effective baseload
+- **Battery storage**: 68 GW planned through 2035, but provides hours (not days) of backup
+- **AI datacenter needs**: Require 24/7 baseload power, making renewables alone insufficient without massive storage buildout
+
+### Synthesis: Maximum US Generation Growth 2025-2035
+
+**Optimistic High-Demand Scenario:**
+If AI/datacenter demand materializes as projected, what is the **maximum feasible** US electricity generation growth?
+
+**2025-2030 (Unconstrained Demand Period):**
+- **Annual additions**: 80-120 TWh/year (matching or slightly exceeding 1970s peak)
+- **Percentage growth**: 2.0-2.8% annually (from 4,100 TWh base in 2025)
+- **Cumulative total by 2030**: 4,600-4,900 TWh (vs. EIA baseline of 4,800 TWh)
+- **Limiting factors**: Interconnection queues, permitting delays, supply chain constraints
+
+**2030-2035 (Infrastructure-Constrained Period):**
+- **Annual additions**: 60-100 TWh/year (declining as easy projects exhaust, transmission limits bind)
+- **Percentage growth**: 1.3-2.0% annually (from 4,800 TWh base in 2030)
+- **Cumulative total by 2035**: 5,100-5,400 TWh
+- **Limiting factors**: Transmission buildout lags, renewable integration challenges, nuclear deployment delays
+
+**Maximum 10-Year Growth (2025-2035):**
+- **Absolute ceiling**: +1,000-1,300 TWh over baseline (25-30% total growth)
+- **Compound annual growth rate**: 2.3-2.7% (significantly above 2008-2021 average of 0.5-1%, but below 1970s)
+- **Total generation by 2035**: ~5,400 TWh in highest plausible scenario
+
+**Comparison to Demand Projections:**
+- **Data center demand growth**: 15-20% annually → 425 TWh by 2030 (from 183 TWh in 2024)
+- **Total generation growth**: 2.3-2.7% annually → ~5,400 TWh by 2035
+- **Implication**: Datacenters could consume 8-10% of total US generation by 2030, creating severe competition with other electrification (EVs, heat pumps, industrial)
+
+### Key Insight: The Hard Ceiling
+
+The US faces a **hard physical ceiling** on electricity growth of approximately **2.5-3.0% annually** even under conditions of unlimited demand and capital. This ceiling is determined by:
+
+1. **Interconnection queue throughput**: ~75 GW/year of agreements at current record pace
+2. **Construction industry capacity**: ~50-70 GW/year of actual completions based on labor, supply chain, permitting
+3. **Transmission development lag**: Cannot expand grid backbone fast enough to support distributed generation
+
+This means that datacenter growth at 15-20% annually is **fundamentally incompatible** with total grid growth at 2.5-3.0% annually beyond ~2028, when datacenters would exceed grid's ability to dedicate capacity.
+
 ### Policy Implications
 
-The gap between datacenter demand growth (15-20%) and grid capacity growth (2-7%) creates a **closing window**:
+The gap between datacenter demand growth (15-20%) and grid capacity growth (2.5-3.0% maximum) creates a **closing window**:
 
 1. **2024-2027**: Abundant energy for AI training expansion
-2. **2027-2030**: Regional constraints emerge, competition for power capacity
+2. **2027-2030**: Regional constraints emerge, competition for power capacity intensifies
 3. **2030+**: Energy becomes primary bottleneck unless major grid investments succeed
 
 This makes **near-term policy** (2024-2027) critical for locking in AI infrastructure before energy constraints bind. Export controls that delay China's chip deployment by 2-3 years may be especially impactful if they push China's scaling plans into the energy-constrained period.
+
+**The hard ceiling on US generation growth (~3% annually) means that datacenter expansion beyond 10-12% of total grid share will require either:**
+- Dramatic efficiency improvements in AI compute (unlikely given scaling laws)
+- Displacement of other electricity uses (residential, commercial, industrial)
+- Co-location with dedicated power sources (on-site nuclear, gas plants) that bypass grid interconnection queues
+- Slowdown in AI scaling ambitions

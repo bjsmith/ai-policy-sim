@@ -768,31 +768,29 @@ async function loadResearchReport() {
         console.log('Research report loaded:', data);
         console.log('Data keys:', Object.keys(data));
 
+        // Store report data globally for section switching
+        window.reportData = data;
+
         // Build the HTML content with section IDs for anchoring
         let html = '';
 
-        // Add methodology section first
-        html += '<div class="report-section" id="methodology">' + data.methodology + '</div>';
-        html += '<div class="factor-divider"></div>';
+        // Add methodology section first (shown by default)
+        html += '<div class="report-section" id="methodology" style="display: block;">' + data.methodology + '</div>';
 
-        // Add compute section
-        html += '<div class="report-section" id="compute">' + data.compute + '</div>';
-        html += '<div class="factor-divider"></div>';
+        // Add compute section (hidden by default)
+        html += '<div class="report-section" id="compute" style="display: none;">' + data.compute + '</div>';
 
-        // Add capital section
-        html += '<div class="report-section" id="capital">' + data.capital + '</div>';
-        html += '<div class="factor-divider"></div>';
+        // Add capital section (hidden by default)
+        html += '<div class="report-section" id="capital" style="display: none;">' + data.capital + '</div>';
 
-        // Add talent section
-        html += '<div class="report-section" id="talent">' + data.talent + '</div>';
-        html += '<div class="factor-divider"></div>';
+        // Add talent section (hidden by default)
+        html += '<div class="report-section" id="talent" style="display: none;">' + data.talent + '</div>';
 
-        // Add energy section
-        html += '<div class="report-section" id="energy">' + data.energy + '</div>';
-        html += '<div class="factor-divider"></div>';
+        // Add energy section (hidden by default)
+        html += '<div class="report-section" id="energy" style="display: none;">' + data.energy + '</div>';
 
-        // Add synthesis section
-        html += '<div class="report-section" id="synthesis">' + data.synthesis + '</div>';
+        // Add synthesis section (hidden by default)
+        html += '<div class="report-section" id="synthesis" style="display: none;">' + data.synthesis + '</div>';
 
         console.log('Built HTML, length:', html.length);
 
@@ -802,7 +800,7 @@ async function loadResearchReport() {
         reportLoading.classList.remove('active');
         reportMain.style.display = 'grid';
 
-        // Setup TOC functionality
+        // Setup TOC functionality with subheadings
         setupTOC();
 
         console.log('Report display complete');
@@ -817,45 +815,79 @@ async function loadResearchReport() {
 
 // Setup Table of Contents functionality
 function setupTOC() {
-    const tocLinks = document.querySelectorAll('.report-toc a');
+    const tocList = document.getElementById('toc-list');
     const sections = document.querySelectorAll('.report-section');
 
-    // Smooth scroll to section on click
+    // Build new TOC with subheadings
+    let tocHTML = '';
+    sections.forEach(section => {
+        const sectionId = section.id;
+        const h1 = section.querySelector('h1');
+        const h2s = section.querySelectorAll('h2');
+        const h3s = section.querySelectorAll('h3');
+
+        if (h1) {
+            // Add main section
+            tocHTML += `<li><a href="#${sectionId}" data-section="${sectionId}" class="toc-main">${h1.textContent}</a>`;
+
+            // Add H2 subheadings
+            if (h2s.length > 0 || h3s.length > 0) {
+                tocHTML += '<ul style="margin-left: 15px; margin-top: 5px;">';
+
+                h2s.forEach(h2 => {
+                    const h2Id = h2.id || sectionId + '-' + h2.textContent.toLowerCase().replace(/[^a-z0-9]+/g, '-');
+                    h2.id = h2Id;
+                    tocHTML += `<li style="margin-bottom: 5px;"><a href="#${h2Id}" data-section="${sectionId}" data-subsection="${h2Id}" class="toc-sub" style="font-size: 0.85em;">${h2.textContent}</a></li>`;
+                });
+
+                tocHTML += '</ul>';
+            }
+
+            tocHTML += '</li>';
+        }
+    });
+
+    tocList.innerHTML = tocHTML;
+
+    // Handle TOC clicks for section switching
+    const tocLinks = document.querySelectorAll('.report-toc a');
     tocLinks.forEach(link => {
         link.addEventListener('click', function(e) {
             e.preventDefault();
             const sectionId = this.getAttribute('data-section');
+            const subsectionId = this.getAttribute('data-subsection');
+
+            // Hide all sections
+            sections.forEach(s => s.style.display = 'none');
+
+            // Show clicked section
             const section = document.getElementById(sectionId);
             if (section) {
-                section.scrollIntoView({ behavior: 'smooth', block: 'start' });
-            }
-        });
-    });
+                section.style.display = 'block';
 
-    // Highlight active section on scroll
-    const observerOptions = {
-        root: null,
-        rootMargin: '-20% 0px -70% 0px',
-        threshold: 0
-    };
-
-    const observer = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                // Remove active class from all links
-                tocLinks.forEach(link => link.classList.remove('active'));
-
-                // Add active class to current section's link
-                const activeLink = document.querySelector(`.report-toc a[data-section="${entry.target.id}"]`);
-                if (activeLink) {
-                    activeLink.classList.add('active');
+                // Scroll to subsection if specified
+                if (subsectionId) {
+                    const subsection = document.getElementById(subsectionId);
+                    if (subsection) {
+                        setTimeout(() => {
+                            subsection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                        }, 100);
+                    }
+                } else {
+                    // Scroll to top of section
+                    section.scrollIntoView({ behavior: 'smooth', block: 'start' });
                 }
             }
-        });
-    }, observerOptions);
 
-    // Observe all sections
-    sections.forEach(section => {
-        observer.observe(section);
+            // Update active state
+            tocLinks.forEach(l => l.classList.remove('active'));
+            this.classList.add('active');
+        });
     });
+
+    // Set first link as active
+    const firstLink = document.querySelector('.report-toc a');
+    if (firstLink) {
+        firstLink.classList.add('active');
+    }
 }

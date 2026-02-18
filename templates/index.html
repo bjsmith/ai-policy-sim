@@ -718,6 +718,34 @@
                                         <input type="range" id="us-talent-constraint" min="0" max="1" step="0.05" value="0.85" oninput="updateSidebar()">
                                     </div>
                                 </div>
+
+                                <div class="param-group" style="background: #fff3cd; border-left: 4px solid #ffc107;">
+                                    <h4 style="color: #1e3c72; margin-bottom: 15px;">⚡ Energy (Two-Phase Model)</h4>
+                                    <div class="param">
+                                        <label>Starting Datacenter Energy (TWh) <span class="param-value" id="us-energy-value">183</span></label>
+                                        <input type="range" id="us-energy" min="50" max="500" step="10" value="183" oninput="updateSidebar()">
+                                    </div>
+                                    <div class="param">
+                                        <label>Unconstrained Growth Rate <span class="param-value" id="us-energy-growth-unconstrained-value">18%</span></label>
+                                        <input type="range" id="us-energy-growth-unconstrained" min="0" max="0.5" step="0.01" value="0.18" oninput="updateSidebar()">
+                                        <div class="help-text">Initial growth rate (datacenter expansion)</div>
+                                    </div>
+                                    <div class="param">
+                                        <label>Grid-Constrained Growth Rate <span class="param-value" id="us-energy-growth-grid-value">6%</span></label>
+                                        <input type="range" id="us-energy-growth-grid" min="0" max="0.15" step="0.01" value="0.06" oninput="updateSidebar()">
+                                        <div class="help-text">Long-term growth rate (limited by grid expansion)</div>
+                                    </div>
+                                    <div class="param">
+                                        <label>Total US Generation Capacity (TWh/y) <span class="param-value" id="us-total-generation-value">4500</span></label>
+                                        <input type="range" id="us-total-generation" min="3000" max="12000" step="100" value="4500" oninput="updateSidebar()">
+                                        <div class="help-text">Total US electricity generation</div>
+                                    </div>
+                                    <div class="param">
+                                        <label>Grid Saturation Threshold <span class="param-value" id="us-grid-threshold-value">8%</span></label>
+                                        <input type="range" id="us-grid-threshold" min="0" max="0.20" step="0.01" value="0.08" oninput="updateSidebar()">
+                                        <div class="help-text">% of total generation when constraints kick in</div>
+                                    </div>
+                                </div>
                             </div>
 
                             <!-- China Parameters -->
@@ -773,47 +801,9 @@
                                         <input type="range" id="china-talent-constraint" min="0" max="1" step="0.05" value="0.75" oninput="updateSidebar()">
                                     </div>
                                 </div>
-                            </div>
-                        </div>
 
-                        <!-- Energy Parameters (special two-phase model) -->
-                        <div style="background: #fff3cd; padding: 25px; border-radius: 12px; border-left: 4px solid #ffc107;">
-                            <h3 style="color: #1e3c72; margin-bottom: 15px;">⚡ Energy Growth Model (Two-Phase)</h3>
-                            <p style="margin-bottom: 20px; color: #666; font-size: 0.95em;">
-                                Energy growth starts unconstrained as planned datacenters come online, then transitions to grid-limited growth when utilization reaches a threshold.
-                            </p>
-
-                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 30px;">
-                                <div>
-                                    <h4 style="color: #4a90e2; margin-bottom: 15px;">🇺🇸 United States</h4>
-                                    <div class="param">
-                                        <label>Starting Datacenter Energy (TWh) <span class="param-value" id="us-energy-value">183</span></label>
-                                        <input type="range" id="us-energy" min="50" max="500" step="10" value="183" oninput="updateSidebar()">
-                                    </div>
-                                    <div class="param">
-                                        <label>Unconstrained Growth Rate <span class="param-value" id="us-energy-growth-unconstrained-value">18%</span></label>
-                                        <input type="range" id="us-energy-growth-unconstrained" min="0" max="0.5" step="0.01" value="0.18" oninput="updateSidebar()">
-                                        <div class="help-text">Initial growth rate (datacenter expansion)</div>
-                                    </div>
-                                    <div class="param">
-                                        <label>Grid-Constrained Growth Rate <span class="param-value" id="us-energy-growth-grid-value">6%</span></label>
-                                        <input type="range" id="us-energy-growth-grid" min="0" max="0.15" step="0.01" value="0.06" oninput="updateSidebar()">
-                                        <div class="help-text">Long-term growth rate (limited by grid expansion)</div>
-                                    </div>
-                                    <div class="param">
-                                        <label>Total US Generation Capacity (TWh/y) <span class="param-value" id="us-total-generation-value">4500</span></label>
-                                        <input type="range" id="us-total-generation" min="3000" max="12000" step="100" value="4500" oninput="updateSidebar()">
-                                        <div class="help-text">Total US electricity generation</div>
-                                    </div>
-                                    <div class="param">
-                                        <label>Grid Saturation Threshold <span class="param-value" id="us-grid-threshold-value">8%</span></label>
-                                        <input type="range" id="us-grid-threshold" min="0" max="0.20" step="0.01" value="0.08" oninput="updateSidebar()">
-                                        <div class="help-text">% of total generation when constraints kick in</div>
-                                    </div>
-                                </div>
-
-                                <div>
-                                    <h4 style="color: #e24a4a; margin-bottom: 15px;">🇨🇳 China</h4>
+                                <div class="param-group" style="background: #fff3cd; border-left: 4px solid #ffc107;">
+                                    <h4 style="color: #1e3c72; margin-bottom: 15px;">⚡ Energy (Two-Phase Model)</h4>
                                     <div class="param">
                                         <label>Starting Datacenter Energy (TWh) <span class="param-value" id="china-energy-value">104</span></label>
                                         <input type="range" id="china-energy" min="50" max="500" step="10" value="104" oninput="updateSidebar()">
