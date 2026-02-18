@@ -77,27 +77,14 @@ class AIProgressSimulation:
             growth_rate: Annual growth rate (e.g., 0.15 for 15%)
             constraint: Policy/infrastructure constraint (0-1)
             year: Year index (0-based)
-            is_energy: If True, apply declining growth rate based on Epoch AI findings
+            is_energy: If True, use simple growth model (two-phase handled separately)
 
         Returns:
             Array of sampled values for this factor
         """
         # Apply growth with some uncertainty
         growth_uncertainty = np.random.normal(0, 0.02, self.samples)
-
-        # For energy, model declining growth rate over time
-        # Based on Epoch AI: constraints bite harder after 2027-2028
-        if is_energy:
-            # Start with base growth rate, decline linearly to grid growth rate by year 6
-            # Year 0-2: 15-20% (planned facilities coming online)
-            # Year 3-5: Transition period as constraints bite
-            # Year 6+: ~5-8% (closer to grid expansion rate)
-            grid_growth_rate = 0.06  # Long-term grid expansion rate
-            transition_factor = min(1.0, year / 6.0)  # Linear decline over 6 years
-            effective_growth_base = growth_rate * (1 - transition_factor) + grid_growth_rate * transition_factor
-            effective_growth = effective_growth_base + growth_uncertainty
-        else:
-            effective_growth = growth_rate + growth_uncertainty
+        effective_growth = growth_rate + growth_uncertainty
 
         # Calculate mean value for this year
         year_mean = mean * ((1 + effective_growth) ** year)
@@ -116,6 +103,62 @@ class AIProgressSimulation:
         samples = np.minimum(samples, max_constrained)
 
         return samples
+
+    def _sample_energy_twophase(self, params: CountryParams, year: int, prev_energy: np.ndarray = None) -> np.ndarray:
+        """
+        Sample energy using two-phase growth model:
+        - Phase 1 (unconstrained): High growth as planned datacenters come online
+        - Phase 2 (grid-constrained): Lower growth limited by grid expansion
+        Transition happens when datacenter usage hits threshold % of total generation
+
+        Args:
+            params: Country parameters with energy model settings
+            year: Year index (0-based)
+            prev_energy: Previous year's energy values (for monotonic constraint)
+
+        Returns:
+            Array of sampled energy values that always increase from prev_energy
+        """
+        if year == 0:
+            # Year 0: Just sample around the mean with uncertainty
+            uncertainty = np.random.normal(1.0, params.energy_std / params.energy_mean, self.samples)
+            samples = params.energy_mean * uncertainty
+            return np.maximum(samples, params.energy_mean * 0.8)  # Floor at 80% of mean
+
+        # Use two-phase model if parameters are available
+        if params.energy_growth_unconstrained is not None and params.total_generation is not None:
+            # Calculate threshold in TWh
+            threshold_twh = params.total_generation * params.grid_threshold
+
+            # Determine which phase each sample is in based on previous year
+            phase_1_mask = prev_energy < threshold_twh
+            phase_2_mask = ~phase_1_mask
+
+            # Initialize next year's energy
+            next_energy = np.zeros(self.samples)
+
+            # Phase 1: Unconstrained growth (datacenter expansion)
+            if np.any(phase_1_mask):
+                growth_1 = np.random.normal(params.energy_growth_unconstrained, 0.02, self.samples)
+                next_energy[phase_1_mask] = prev_energy[phase_1_mask] * (1 + growth_1[phase_1_mask])
+
+            # Phase 2: Grid-constrained growth
+            if np.any(phase_2_mask):
+                growth_2 = np.random.normal(params.energy_growth_grid, 0.015, self.samples)
+                next_energy[phase_2_mask] = prev_energy[phase_2_mask] * (1 + growth_2[phase_2_mask])
+
+            # Ensure we never exceed total generation capacity (hard ceiling)
+            next_energy = np.minimum(next_energy, params.total_generation * 0.95)
+
+        else:
+            # Fallback to simple growth model
+            growth = np.random.normal(params.energy_growth_rate, 0.02, self.samples)
+            next_energy = prev_energy * (1 + growth)
+
+        # CRITICAL: Ensure monotonic increase (energy never decreases)
+        next_energy = np.maximum(next_energy, prev_energy * 1.01)  # Minimum 1% growth
+
+        return next_energy
 
     def _calculate_progress(self, compute: np.ndarray, capital: np.ndarray,
                            talent: np.ndarray, energy: np.ndarray,
@@ -245,14 +288,9 @@ class AIProgressSimulation:
                 self.us_params.talent_constraint,
                 year
             )
-            us_energy = self._sample_factor(
-                self.us_params.energy_mean,
-                self.us_params.energy_std,
-                self.us_params.energy_growth_rate,
-                self.us_params.energy_constraint,
-                year,
-                is_energy=True
-            )
+            # Use two-phase energy model
+            prev_us_energy = us_energy_ts[year-1] if year > 0 else None
+            us_energy = self._sample_energy_twophase(self.us_params, year, prev_us_energy)
 
             # Sample China factors
             china_compute = self._sample_factor(
@@ -276,14 +314,9 @@ class AIProgressSimulation:
                 self.china_params.talent_constraint,
                 year
             )
-            china_energy = self._sample_factor(
-                self.china_params.energy_mean,
-                self.china_params.energy_std,
-                self.china_params.energy_growth_rate,
-                self.china_params.energy_constraint,
-                year,
-                is_energy=True
-            )
+            # Use two-phase energy model
+            prev_china_energy = china_energy_ts[year-1] if year > 0 else None
+            china_energy = self._sample_energy_twophase(self.china_params, year, prev_china_energy)
 
             # Store factor values
             us_compute_ts[year] = us_compute

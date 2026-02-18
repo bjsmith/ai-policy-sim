@@ -640,6 +640,21 @@
                     <div style="max-width: 1200px; margin: 0 auto;">
                         <h2 style="margin-bottom: 20px; color: #1e3c72;">Simulation Parameters</h2>
 
+                        <!-- Preset Selector -->
+                        <div style="background: #f0f7ff; padding: 20px; border-radius: 12px; margin-bottom: 30px; border-left: 4px solid #667eea;">
+                            <div style="display: flex; align-items: center; gap: 20px;">
+                                <label style="font-weight: 600; color: #1e3c72; font-size: 1.1em;">Preset Scenario:</label>
+                                <select id="preset-selector" style="flex: 1; max-width: 400px; padding: 10px 15px; font-size: 1em; border: 2px solid #667eea; border-radius: 8px; background: white; cursor: pointer;">
+                                    <option value="evidence-based">Evidence-based (Current Research)</option>
+                                    <option value="equal-starting">Equal Starting Points</option>
+                                </select>
+                                <button onclick="applyPreset()" class="btn btn-primary" style="width: auto; padding: 10px 20px; margin: 0;">Apply Preset</button>
+                            </div>
+                            <p style="margin-top: 12px; color: #666; font-size: 0.9em; font-style: italic;">
+                                Select a preset scenario, then click "Apply Preset" to load the values
+                            </p>
+                        </div>
+
                         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 30px; margin-bottom: 30px;">
                             <!-- US Parameters -->
                             <div style="background: #f8f9fa; padding: 25px; border-radius: 12px;">
@@ -651,7 +666,7 @@
                                     <h4 style="color: #1e3c72; margin-bottom: 15px;">Compute</h4>
                                     <div class="param">
                                         <label>Current Capacity (M GPUs) <span class="param-value" id="us-compute-value">3.5</span></label>
-                                        <input type="range" id="us-compute" min="1" max="8" step="0.1" value="3.5" oninput="updateSidebar()">
+                                        <input type="range" id="us-compute" min="0.1" max="8" step="0.1" value="3.5" oninput="updateSidebar()">
                                     </div>
                                     <div class="param">
                                         <label>Growth Rate <span class="param-value" id="us-compute-growth-value">50%</span></label>
@@ -706,7 +721,7 @@
                                     <h4 style="color: #1e3c72; margin-bottom: 15px;">Compute</h4>
                                     <div class="param">
                                         <label>Current Capacity (M GPUs) <span class="param-value" id="china-compute-value">0.6</span></label>
-                                        <input type="range" id="china-compute" min="0.1" max="5" step="0.1" value="0.6" oninput="updateSidebar()">
+                                        <input type="range" id="china-compute" min="0.1" max="8" step="0.1" value="0.6" oninput="updateSidebar()">
                                     </div>
                                     <div class="param">
                                         <label>Growth Rate <span class="param-value" id="china-compute-growth-value">35%</span></label>
@@ -778,7 +793,7 @@
                                     </div>
                                     <div class="param">
                                         <label>Total US Generation Capacity (TWh/y) <span class="param-value" id="us-total-generation-value">4500</span></label>
-                                        <input type="range" id="us-total-generation" min="3000" max="6000" step="100" value="4500" oninput="updateSidebar()">
+                                        <input type="range" id="us-total-generation" min="3000" max="12000" step="100" value="4500" oninput="updateSidebar()">
                                         <div class="help-text">Total US electricity generation</div>
                                     </div>
                                     <div class="param">
@@ -806,7 +821,7 @@
                                     </div>
                                     <div class="param">
                                         <label>Total China Generation Capacity (TWh/y) <span class="param-value" id="china-total-generation-value">8500</span></label>
-                                        <input type="range" id="china-total-generation" min="6000" max="12000" step="100" value="8500" oninput="updateSidebar()">
+                                        <input type="range" id="china-total-generation" min="3000" max="12000" step="100" value="8500" oninput="updateSidebar()">
                                         <div class="help-text">Total China electricity generation</div>
                                     </div>
                                     <div class="param">
