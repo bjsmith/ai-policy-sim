@@ -1,0 +1,906 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>US-China AI Policy Simulation</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: #333;
+        }
+
+        .container {
+            max-width: 1600px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+        }
+
+        header {
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            color: white;
+            padding: 30px 40px;
+            text-align: center;
+        }
+
+        header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+
+        header p {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+
+        .main-content {
+            display: grid;
+            grid-template-columns: 400px 1fr;
+            gap: 0;
+        }
+
+        .sidebar {
+            background: #f8f9fa;
+            padding: 30px;
+            border-right: 1px solid #e0e0e0;
+            max-height: calc(100vh - 200px);
+            overflow-y: auto;
+        }
+
+        .content {
+            padding: 30px;
+        }
+
+        .section {
+            margin-bottom: 30px;
+        }
+
+        .section h2 {
+            font-size: 1.3em;
+            margin-bottom: 15px;
+            color: #1e3c72;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .country-indicator {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            display: inline-block;
+        }
+
+        .us-indicator {
+            background: linear-gradient(135deg, #4a90e2, #357abd);
+        }
+
+        .china-indicator {
+            background: linear-gradient(135deg, #e24a4a, #bd3535);
+        }
+
+        .param-group {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .param-group h3 {
+            font-size: 1em;
+            margin-bottom: 15px;
+            color: #555;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-weight: 600;
+        }
+
+        .param {
+            margin-bottom: 20px;
+        }
+
+        .param label {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 0.9em;
+            color: #666;
+            font-weight: 500;
+        }
+
+        .param-value {
+            font-weight: 700;
+            color: #1e3c72;
+            float: right;
+        }
+
+        input[type="range"] {
+            width: 100%;
+            height: 6px;
+            border-radius: 3px;
+            background: #ddd;
+            outline: none;
+            -webkit-appearance: none;
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: #667eea;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        input[type="range"]::-webkit-slider-thumb:hover {
+            transform: scale(1.2);
+            background: #5568d3;
+        }
+
+        input[type="range"]::-moz-range-thumb {
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: #667eea;
+            cursor: pointer;
+            border: none;
+        }
+
+        .btn {
+            width: 100%;
+            padding: 16px;
+            font-size: 1.1em;
+            font-weight: 600;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
+        }
+
+        .btn-primary:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .btn-secondary {
+            background: white;
+            color: #667eea;
+            border: 2px solid #667eea;
+            margin-bottom: 15px;
+        }
+
+        .btn-secondary:hover {
+            background: #f8f9fa;
+        }
+
+        .chart-container {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
+            margin-bottom: 30px;
+            position: relative;
+            height: 450px;
+        }
+
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .metric-card {
+            background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            border-left: 4px solid #667eea;
+        }
+
+        .metric-card h3 {
+            font-size: 0.9em;
+            color: #666;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .metric-card .value {
+            font-size: 2.5em;
+            font-weight: 700;
+            color: #1e3c72;
+        }
+
+        .metric-card .subvalue {
+            font-size: 0.9em;
+            color: #999;
+            margin-top: 5px;
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 40px;
+            font-size: 1.2em;
+            color: #667eea;
+        }
+
+        .loading.active {
+            display: block;
+        }
+
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            margin: 20px auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .info-box {
+            background: #e3f2fd;
+            border-left: 4px solid #2196f3;
+            padding: 15px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+            font-size: 0.9em;
+            color: #1565c0;
+        }
+
+        .info-box strong {
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #e0e0e0;
+        }
+
+        .tab {
+            padding: 12px 24px;
+            background: none;
+            border: none;
+            border-bottom: 3px solid transparent;
+            cursor: pointer;
+            font-size: 1em;
+            font-weight: 600;
+            color: #666;
+            transition: all 0.3s;
+        }
+
+        .tab.active {
+            color: #667eea;
+            border-bottom-color: #667eea;
+        }
+
+        .tab:hover {
+            color: #667eea;
+        }
+
+        .factor-charts {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .factor-chart {
+            height: 300px;
+        }
+
+        .help-text {
+            font-size: 0.85em;
+            color: #999;
+            margin-top: 5px;
+            font-style: italic;
+        }
+
+        .report-content {
+            display: grid;
+            grid-template-columns: 280px 1fr;
+            gap: 40px;
+            line-height: 1.7;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .report-toc {
+            position: -webkit-sticky;
+            position: sticky;
+            top: 20px;
+            align-self: start;
+            height: fit-content;
+            max-height: calc(100vh - 40px);
+            overflow-y: auto;
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 12px;
+            border-left: 4px solid #667eea;
+            z-index: 10;
+        }
+
+        .report-toc h3 {
+            font-size: 1.1em;
+            color: #1e3c72;
+            margin-bottom: 15px;
+            font-weight: 700;
+        }
+
+        .report-toc ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .report-toc li {
+            margin-bottom: 8px;
+        }
+
+        .report-toc a {
+            color: #555;
+            text-decoration: none;
+            display: block;
+            padding: 8px 12px;
+            border-radius: 6px;
+            transition: all 0.2s;
+            font-size: 0.95em;
+        }
+
+        .report-toc a:hover {
+            background: #667eea;
+            color: white;
+        }
+
+        .report-toc a.active {
+            background: #667eea;
+            color: white;
+            font-weight: 600;
+        }
+
+        .report-body {
+            min-width: 0;
+        }
+
+        #report-tab {
+            overflow: visible;
+            height: auto;
+        }
+
+        .report-content h1 {
+            font-size: 2em;
+            color: #1e3c72;
+            margin-bottom: 15px;
+            border-bottom: 3px solid #667eea;
+            padding-bottom: 10px;
+        }
+
+        .report-content h2 {
+            font-size: 1.4em;
+            color: #2a5298;
+            margin-top: 30px;
+            margin-bottom: 15px;
+        }
+
+        .report-content h3 {
+            font-size: 1.1em;
+            color: #555;
+            margin-top: 20px;
+            margin-bottom: 10px;
+        }
+
+        .report-content p {
+            margin-bottom: 15px;
+            text-align: justify;
+        }
+
+        .report-content a {
+            color: #667eea;
+            text-decoration: none;
+            border-bottom: 1px dotted #667eea;
+        }
+
+        .report-content a:hover {
+            color: #5568d3;
+            border-bottom: 1px solid #5568d3;
+        }
+
+        .report-content strong {
+            color: #1e3c72;
+            font-weight: 600;
+        }
+
+        .report-section {
+            scroll-margin-top: 20px;
+        }
+
+        .factor-divider {
+            height: 2px;
+            background: linear-gradient(to right, transparent, #e0e0e0, transparent);
+            margin: 40px 0;
+        }
+
+        .report-content code {
+            background: #f5f5f5;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+            color: #d63384;
+        }
+
+        .report-content pre {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            overflow-x: auto;
+            border-left: 4px solid #667eea;
+            margin: 20px 0;
+        }
+
+        .report-content pre code {
+            background: none;
+            padding: 0;
+            color: inherit;
+        }
+
+        .report-content ul {
+            margin-left: 25px;
+            margin-bottom: 15px;
+        }
+
+        /* Scrollbar styling for TOC */
+        .report-toc::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .report-toc::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 3px;
+        }
+
+        .report-toc::-webkit-scrollbar-thumb {
+            background: #667eea;
+            border-radius: 3px;
+        }
+
+        .report-toc::-webkit-scrollbar-thumb:hover {
+            background: #5568d3;
+        }
+
+        /* Responsive design for smaller screens */
+        @media (max-width: 1200px) {
+            .report-content {
+                grid-template-columns: 240px 1fr;
+                gap: 25px;
+            }
+
+            .report-toc {
+                padding: 15px;
+            }
+
+            .report-toc h3 {
+                font-size: 1em;
+            }
+
+            .report-toc a {
+                font-size: 0.85em;
+                padding: 6px 10px;
+            }
+        }
+
+        @media (max-width: 900px) {
+            .report-content {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+
+            .report-toc {
+                position: static;
+                max-height: none;
+                margin-bottom: 20px;
+            }
+        }
+
+        .report-content li {
+            margin-bottom: 8px;
+        }
+
+        .report-section {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            margin-bottom: 25px;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+        }
+
+        .factor-divider {
+            border-top: 2px solid #e0e0e0;
+            margin: 40px 0;
+        }
+
+        @media (max-width: 1200px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+
+            .sidebar {
+                max-height: none;
+                border-right: none;
+                border-bottom: 1px solid #e0e0e0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>US-China AI Policy Simulation</h1>
+            <p>Probabilistic modeling of frontier AI development based on compute, capital, talent, and energy constraints</p>
+        </header>
+
+        <div class="main-content">
+            <aside class="sidebar">
+                <h3 style="margin-bottom: 20px; font-size: 1.1em; color: #1e3c72;">Current Settings</h3>
+
+                <div class="section">
+                    <h2><span class="country-indicator us-indicator"></span> US</h2>
+                    <div style="font-size: 0.85em; line-height: 1.8; color: #555;">
+                        <div><strong>Compute:</strong> <span id="sidebar-us-compute">3.5</span>M GPUs</div>
+                        <div><strong>Capital:</strong> $<span id="sidebar-us-capital">109</span>B</div>
+                        <div><strong>Talent:</strong> <span id="sidebar-us-talent">63</span>K researchers</div>
+                        <div><strong>Energy:</strong> <span id="sidebar-us-energy">183</span> TWh</div>
+                    </div>
+                </div>
+
+                <div class="section">
+                    <h2><span class="country-indicator china-indicator"></span> China</h2>
+                    <div style="font-size: 0.85em; line-height: 1.8; color: #555;">
+                        <div><strong>Compute:</strong> <span id="sidebar-china-compute">0.6</span>M GPUs</div>
+                        <div><strong>Capital:</strong> $<span id="sidebar-china-capital">98</span>B</div>
+                        <div><strong>Talent:</strong> <span id="sidebar-china-talent">52</span>K researchers</div>
+                        <div><strong>Energy:</strong> <span id="sidebar-china-energy">104</span> TWh</div>
+                    </div>
+                </div>
+
+                <div style="margin-top: 20px; padding: 15px; background: #e3f2fd; border-radius: 8px; font-size: 0.85em;">
+                    <strong style="color: #1565c0;">Energy Model:</strong>
+                    <div style="color: #666; margin-top: 8px; line-height: 1.6;">
+                        Two-phase growth with grid saturation at <span id="sidebar-grid-threshold">8%</span> of total generation
+                    </div>
+                </div>
+
+                <div style="margin-top: 20px;">
+                    <button class="btn btn-secondary" onclick="loadDefaults()" style="width: 100%; margin-bottom: 10px;">Reset to Defaults</button>
+                    <button class="btn btn-primary" onclick="runSimulation()" style="width: 100%; margin-bottom: 10px;">Run Simulation</button>
+                    <button class="btn btn-secondary" onclick="showTab('settings')" style="width: 100%;">Edit Settings</button>
+                </div>
+            </aside>
+
+            <main class="content">
+                <div class="info-box">
+                    <strong>About this simulation</strong>
+                    This model uses Monte Carlo sampling to project frontier AI development over time. Each run generates 200 probabilistic scenarios based on the four key factors. Adjust the parameters to explore different policy scenarios.
+                </div>
+
+                <div class="tabs" style="margin-bottom: 20px;">
+                    <button class="tab" id="tab-progress" onclick="showTab('progress')">Frontier Progress</button>
+                    <button class="tab" id="tab-factors" onclick="showTab('factors')">Factor Analysis</button>
+                    <button class="tab active" id="tab-settings" onclick="showTab('settings')">Settings</button>
+                    <button class="tab" id="tab-report" onclick="showTab('report')">Research Report</button>
+                </div>
+
+                <div class="loading" id="loading">
+                    <div class="spinner"></div>
+                    <p>Running simulation...</p>
+                </div>
+
+                <div id="settings-tab">
+                    <div style="max-width: 1200px; margin: 0 auto;">
+                        <h2 style="margin-bottom: 20px; color: #1e3c72;">Simulation Parameters</h2>
+
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 30px; margin-bottom: 30px;">
+                            <!-- US Parameters -->
+                            <div style="background: #f8f9fa; padding: 25px; border-radius: 12px;">
+                                <h3 style="color: #4a90e2; margin-bottom: 20px; display: flex; align-items: center; gap: 10px;">
+                                    <span class="country-indicator us-indicator"></span> United States
+                                </h3>
+
+                                <div class="param-group">
+                                    <h4 style="color: #1e3c72; margin-bottom: 15px;">Compute</h4>
+                                    <div class="param">
+                                        <label>Current Capacity (M GPUs) <span class="param-value" id="us-compute-value">3.5</span></label>
+                                        <input type="range" id="us-compute" min="1" max="8" step="0.1" value="3.5" oninput="updateSidebar()">
+                                    </div>
+                                    <div class="param">
+                                        <label>Growth Rate <span class="param-value" id="us-compute-growth-value">50%</span></label>
+                                        <input type="range" id="us-compute-growth" min="0" max="1" step="0.05" value="0.50" oninput="updateSidebar()">
+                                    </div>
+                                    <div class="param">
+                                        <label>Policy Constraint <span class="param-value" id="us-compute-constraint-value">95%</span></label>
+                                        <input type="range" id="us-compute-constraint" min="0" max="1" step="0.05" value="0.95" oninput="updateSidebar()">
+                                    </div>
+                                </div>
+
+                                <div class="param-group">
+                                    <h4 style="color: #1e3c72; margin-bottom: 15px;">Capital</h4>
+                                    <div class="param">
+                                        <label>Investment ($B) <span class="param-value" id="us-capital-value">109</span></label>
+                                        <input type="range" id="us-capital" min="20" max="300" step="5" value="109" oninput="updateSidebar()">
+                                    </div>
+                                    <div class="param">
+                                        <label>Growth Rate <span class="param-value" id="us-capital-growth-value">30%</span></label>
+                                        <input type="range" id="us-capital-growth" min="0" max="1" step="0.05" value="0.30" oninput="updateSidebar()">
+                                    </div>
+                                    <div class="param">
+                                        <label>Policy Constraint <span class="param-value" id="us-capital-constraint-value">90%</span></label>
+                                        <input type="range" id="us-capital-constraint" min="0" max="1" step="0.05" value="0.90" oninput="updateSidebar()">
+                                    </div>
+                                </div>
+
+                                <div class="param-group">
+                                    <h4 style="color: #1e3c72; margin-bottom: 15px;">Talent</h4>
+                                    <div class="param">
+                                        <label>AI Researchers (K) <span class="param-value" id="us-talent-value">63</span></label>
+                                        <input type="range" id="us-talent" min="20" max="150" step="1" value="63" oninput="updateSidebar()">
+                                    </div>
+                                    <div class="param">
+                                        <label>Growth Rate <span class="param-value" id="us-talent-growth-value">8%</span></label>
+                                        <input type="range" id="us-talent-growth" min="0" max="0.5" step="0.01" value="0.08" oninput="updateSidebar()">
+                                    </div>
+                                    <div class="param">
+                                        <label>Policy Constraint <span class="param-value" id="us-talent-constraint-value">85%</span></label>
+                                        <input type="range" id="us-talent-constraint" min="0" max="1" step="0.05" value="0.85" oninput="updateSidebar()">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- China Parameters -->
+                            <div style="background: #f8f9fa; padding: 25px; border-radius: 12px;">
+                                <h3 style="color: #e24a4a; margin-bottom: 20px; display: flex; align-items: center; gap: 10px;">
+                                    <span class="country-indicator china-indicator"></span> China
+                                </h3>
+
+                                <div class="param-group">
+                                    <h4 style="color: #1e3c72; margin-bottom: 15px;">Compute</h4>
+                                    <div class="param">
+                                        <label>Current Capacity (M GPUs) <span class="param-value" id="china-compute-value">0.6</span></label>
+                                        <input type="range" id="china-compute" min="0.1" max="5" step="0.1" value="0.6" oninput="updateSidebar()">
+                                    </div>
+                                    <div class="param">
+                                        <label>Growth Rate <span class="param-value" id="china-compute-growth-value">35%</span></label>
+                                        <input type="range" id="china-compute-growth" min="0" max="1" step="0.05" value="0.35" oninput="updateSidebar()">
+                                    </div>
+                                    <div class="param">
+                                        <label>Policy Constraint <span class="param-value" id="china-compute-constraint-value">45%</span></label>
+                                        <input type="range" id="china-compute-constraint" min="0" max="1" step="0.05" value="0.45" oninput="updateSidebar()">
+                                    </div>
+                                </div>
+
+                                <div class="param-group">
+                                    <h4 style="color: #1e3c72; margin-bottom: 15px;">Capital</h4>
+                                    <div class="param">
+                                        <label>Investment ($B) <span class="param-value" id="china-capital-value">98</span></label>
+                                        <input type="range" id="china-capital" min="20" max="300" step="5" value="98" oninput="updateSidebar()">
+                                    </div>
+                                    <div class="param">
+                                        <label>Growth Rate <span class="param-value" id="china-capital-growth-value">25%</span></label>
+                                        <input type="range" id="china-capital-growth" min="0" max="1" step="0.05" value="0.25" oninput="updateSidebar()">
+                                    </div>
+                                    <div class="param">
+                                        <label>Policy Constraint <span class="param-value" id="china-capital-constraint-value">70%</span></label>
+                                        <input type="range" id="china-capital-constraint" min="0" max="1" step="0.05" value="0.70" oninput="updateSidebar()">
+                                    </div>
+                                </div>
+
+                                <div class="param-group">
+                                    <h4 style="color: #1e3c72; margin-bottom: 15px;">Talent</h4>
+                                    <div class="param">
+                                        <label>AI Researchers (K) <span class="param-value" id="china-talent-value">52</span></label>
+                                        <input type="range" id="china-talent" min="20" max="150" step="1" value="52" oninput="updateSidebar()">
+                                    </div>
+                                    <div class="param">
+                                        <label>Growth Rate <span class="param-value" id="china-talent-growth-value">12%</span></label>
+                                        <input type="range" id="china-talent-growth" min="0" max="0.5" step="0.01" value="0.12" oninput="updateSidebar()">
+                                    </div>
+                                    <div class="param">
+                                        <label>Policy Constraint <span class="param-value" id="china-talent-constraint-value">75%</span></label>
+                                        <input type="range" id="china-talent-constraint" min="0" max="1" step="0.05" value="0.75" oninput="updateSidebar()">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Energy Parameters (special two-phase model) -->
+                        <div style="background: #fff3cd; padding: 25px; border-radius: 12px; border-left: 4px solid #ffc107;">
+                            <h3 style="color: #1e3c72; margin-bottom: 15px;">⚡ Energy Growth Model (Two-Phase)</h3>
+                            <p style="margin-bottom: 20px; color: #666; font-size: 0.95em;">
+                                Energy growth starts unconstrained as planned datacenters come online, then transitions to grid-limited growth when utilization reaches a threshold.
+                            </p>
+
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 30px;">
+                                <div>
+                                    <h4 style="color: #4a90e2; margin-bottom: 15px;">🇺🇸 United States</h4>
+                                    <div class="param">
+                                        <label>Starting Datacenter Energy (TWh) <span class="param-value" id="us-energy-value">183</span></label>
+                                        <input type="range" id="us-energy" min="50" max="500" step="10" value="183" oninput="updateSidebar()">
+                                    </div>
+                                    <div class="param">
+                                        <label>Unconstrained Growth Rate <span class="param-value" id="us-energy-growth-unconstrained-value">18%</span></label>
+                                        <input type="range" id="us-energy-growth-unconstrained" min="0" max="0.5" step="0.01" value="0.18" oninput="updateSidebar()">
+                                        <div class="help-text">Initial growth rate (datacenter expansion)</div>
+                                    </div>
+                                    <div class="param">
+                                        <label>Grid-Constrained Growth Rate <span class="param-value" id="us-energy-growth-grid-value">6%</span></label>
+                                        <input type="range" id="us-energy-growth-grid" min="0" max="0.15" step="0.01" value="0.06" oninput="updateSidebar()">
+                                        <div class="help-text">Long-term growth rate (limited by grid expansion)</div>
+                                    </div>
+                                    <div class="param">
+                                        <label>Total US Generation Capacity (TWh/y) <span class="param-value" id="us-total-generation-value">4500</span></label>
+                                        <input type="range" id="us-total-generation" min="3000" max="6000" step="100" value="4500" oninput="updateSidebar()">
+                                        <div class="help-text">Total US electricity generation</div>
+                                    </div>
+                                    <div class="param">
+                                        <label>Grid Saturation Threshold <span class="param-value" id="us-grid-threshold-value">8%</span></label>
+                                        <input type="range" id="us-grid-threshold" min="0" max="0.20" step="0.01" value="0.08" oninput="updateSidebar()">
+                                        <div class="help-text">% of total generation when constraints kick in</div>
+                                    </div>
+                                </div>
+
+                                <div>
+                                    <h4 style="color: #e24a4a; margin-bottom: 15px;">🇨🇳 China</h4>
+                                    <div class="param">
+                                        <label>Starting Datacenter Energy (TWh) <span class="param-value" id="china-energy-value">104</span></label>
+                                        <input type="range" id="china-energy" min="50" max="500" step="10" value="104" oninput="updateSidebar()">
+                                    </div>
+                                    <div class="param">
+                                        <label>Unconstrained Growth Rate <span class="param-value" id="china-energy-growth-unconstrained-value">20%</span></label>
+                                        <input type="range" id="china-energy-growth-unconstrained" min="0" max="0.5" step="0.01" value="0.20" oninput="updateSidebar()">
+                                        <div class="help-text">Initial growth rate (datacenter expansion)</div>
+                                    </div>
+                                    <div class="param">
+                                        <label>Grid-Constrained Growth Rate <span class="param-value" id="china-energy-growth-grid-value">7%</span></label>
+                                        <input type="range" id="china-energy-growth-grid" min="0" max="0.15" step="0.01" value="0.07" oninput="updateSidebar()">
+                                        <div class="help-text">Long-term growth rate (limited by grid expansion)</div>
+                                    </div>
+                                    <div class="param">
+                                        <label>Total China Generation Capacity (TWh/y) <span class="param-value" id="china-total-generation-value">8500</span></label>
+                                        <input type="range" id="china-total-generation" min="6000" max="12000" step="100" value="8500" oninput="updateSidebar()">
+                                        <div class="help-text">Total China electricity generation</div>
+                                    </div>
+                                    <div class="param">
+                                        <label>Grid Saturation Threshold <span class="param-value" id="china-grid-threshold-value">6%</span></label>
+                                        <input type="range" id="china-grid-threshold" min="0" max="0.20" step="0.01" value="0.06" oninput="updateSidebar()">
+                                        <div class="help-text">% of total generation when constraints kick in</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div style="margin-top: 30px; text-align: center;">
+                            <button class="btn btn-primary" onclick="runSimulation()" style="font-size: 1.1em; padding: 15px 40px;">
+                                Run Simulation
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="progress-tab" style="display: none;">
+                    <div class="metrics-grid">
+                        <div class="metric-card">
+                            <h3>Catch-up Probability</h3>
+                            <div class="value" id="catchup-prob">--</div>
+                            <div class="subvalue">China reaches 90% of US progress</div>
+                        </div>
+                        <div class="metric-card">
+                            <h3>Surpass Probability</h3>
+                            <div class="value" id="surpass-prob">--</div>
+                            <div class="subvalue">China exceeds US progress</div>
+                        </div>
+                        <div class="metric-card">
+                            <h3>US Progress (Year 10)</h3>
+                            <div class="value" id="us-final">--</div>
+                            <div class="subvalue">Median scenario</div>
+                        </div>
+                        <div class="metric-card">
+                            <h3>China Progress (Year 10)</h3>
+                            <div class="value" id="china-final">--</div>
+                            <div class="subvalue">Median scenario</div>
+                        </div>
+                    </div>
+
+                    <div class="chart-container">
+                        <canvas id="progressChart"></canvas>
+                    </div>
+                    <div class="chart-container" style="margin-top: 30px;">
+                        <canvas id="trainingCapacityChart"></canvas>
+                    </div>
+                </div>
+
+                <div id="factors-tab" style="display: none;">
+                    <div class="factor-charts">
+                        <div class="chart-container factor-chart">
+                            <canvas id="computeChart"></canvas>
+                        </div>
+                        <div class="chart-container factor-chart">
+                            <canvas id="capitalChart"></canvas>
+                        </div>
+                        <div class="chart-container factor-chart">
+                            <canvas id="talentChart"></canvas>
+                        </div>
+                        <div class="chart-container factor-chart">
+                            <canvas id="energyChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="report-tab">
+                    <div id="report-loading" class="loading active">
+                        <div class="spinner"></div>
+                        <p>Loading research report...</p>
+                    </div>
+                    <div class="report-content" style="display: none;" id="report-main">
+                        <aside class="report-toc">
+                            <h3>Contents</h3>
+                            <ul id="toc-list">
+                                <li><a href="#methodology" data-section="methodology">Methodology</a></li>
+                                <li><a href="#compute" data-section="compute">Compute</a></li>
+                                <li><a href="#capital" data-section="capital">Capital</a></li>
+                                <li><a href="#talent" data-section="talent">Talent</a></li>
+                                <li><a href="#energy" data-section="energy">Energy</a></li>
+                                <li><a href="#synthesis" data-section="synthesis">Synthesis</a></li>
+                            </ul>
+                        </aside>
+                        <div class="report-body" id="report-sections">
+                            <!-- Report content will be loaded here -->
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='app.js') }}"></script>
+</body>
+</html>
